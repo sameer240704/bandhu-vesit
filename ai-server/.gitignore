@@ -1,0 +1,12 @@
+__pypackages__/
+__pycache__
+
+.env
+new_env/
+venv
+env/
+venv/
+venv_2/
+ENV/
+env.bak/
+venv.bak/

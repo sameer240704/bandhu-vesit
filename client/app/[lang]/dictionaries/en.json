@@ -1,0 +1,21 @@
+{
+    "home": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "goToDash": "Go To Dashboard"
+    },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "games": "Games",
+        "user": "User",
+        "overview": "Overview",
+        "recent": "Recent Activities",
+        "universe": "MindPlay Universe",
+        "cognitive": "Cognitive Development",
+        "motor": "Motor Skills",
+        "emotional": "Emotional Well-being",
+        "social": "Social Interaction",
+        "settings": "Settings",
+        "profile": "Profile"
+    }
+}
