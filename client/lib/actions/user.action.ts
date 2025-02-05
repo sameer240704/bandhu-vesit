@@ -2,8 +2,9 @@
 
 import User from "@/lib/models/user.model";
 import { connect } from "@/lib/mongo.db";
+import { UserType } from "@/types/user";
 
-export async function createUser(user: any) {
+export async function createUser(user: UserType) {
   try {
     await connect();
 

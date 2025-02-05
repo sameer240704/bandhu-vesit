@@ -16,7 +16,7 @@ export default function Page() {
         appearance={{
           elements: {
             rootBox: "w-full max-w-md",
-            card: "shadow-xl rounded-xl",
+            card: "rounded-xl",
             headerTitle: "text-2xl font-bold",
             headerSubtitle: "text-gray-500",
             formButtonPrimary: "bg-purple-600 hover:bg-purple-700 w-full",

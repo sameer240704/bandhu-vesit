@@ -6,6 +6,7 @@ import Negotiator from "negotiator";
 const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/api/webhooks(.*)",
   "/en/sign-in",
   "/mr/sign-in",
   "/hi/sign-in",
@@ -15,7 +16,6 @@ const isPublicRoute = createRouteMatcher([
   "/en",
   "/hi",
   "/mr",
-  "/api/webhooks/clerk",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
