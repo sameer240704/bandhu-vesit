@@ -12,9 +12,9 @@ import { usePathname } from "next/navigation";
 
 type LanguageCode = "en" | "hi" | "mr";
 
-type Dictionary = {
-  [key: string]: string | Dictionary;
-};
+interface Dictionary {
+  [key: string]: string | { [key: string]: string };
+}
 
 interface LanguageContextType {
   currentLang: LanguageCode;
@@ -52,7 +52,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   useEffect(() => {
     const fetchDictionary = async () => {
       const dictionary = await getDictionary(currentLang);
-      setDict(dictionary);
+      setDict(dictionary as Dictionary);
     };
 
     fetchDictionary();

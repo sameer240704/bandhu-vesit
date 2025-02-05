@@ -41,7 +41,9 @@ const Sidebar = () => {
               <div key={index} className="mb-4">
                 {sidebarState && (
                   <p className="text-sm font-semibold text-gray-300 uppercase mb-3">
-                    {dict?.sidebar?.[category.category] || category.category}
+                    {(dict?.home as { [key: string]: string })?.[
+                      category.category
+                    ] || category.category}
                   </p>
                 )}
                 <ul>
@@ -62,7 +64,9 @@ const Sidebar = () => {
                         </span>
                         {sidebarState && (
                           <span className="text-100">
-                            {dict?.sidebar?.[item.title] || item.title}
+                            {(dict?.sidebar as { [key: string]: string })?.[
+                              item.title
+                            ] || item.title}
                           </span>
                         )}
                       </Link>

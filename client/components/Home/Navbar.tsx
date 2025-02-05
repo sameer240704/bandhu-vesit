@@ -27,7 +27,7 @@ const Navbar = () => {
                   href={`/${currentLang}/overview`}
                   className="btn-primary font-semibold"
                 >
-                  {dict?.home?.goToDash}
+                  {(dict?.home as { goToDash: string })?.goToDash}
                 </Link>
               ) : (
                 <>
@@ -35,13 +35,13 @@ const Navbar = () => {
                     href={`/${currentLang}/sign-in`}
                     className="btn-primary font-semibold"
                   >
-                    {dict?.home?.signIn}
+                    {(dict?.home as { signIn: string })?.signIn}
                   </Link>
                   <Link
                     href={`/${currentLang}/sign-up`}
                     className="btn-secondary font-semibold"
                   >
-                    {dict?.home?.signUp}
+                    {(dict?.home as { signUp: string })?.signUp}
                   </Link>
                 </>
               )}
