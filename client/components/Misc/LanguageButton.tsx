@@ -9,7 +9,11 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Globe } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
-const LanguageSwitcher = () => {
+interface LanguageSwitcherProps {
+  currentLang: "en" | "hi" | "mr";
+}
+
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = () => {
   const { currentLang, setCurrentLang } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
