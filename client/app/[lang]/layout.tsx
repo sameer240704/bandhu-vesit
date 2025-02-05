@@ -35,7 +35,7 @@ export default async function RootLayout({
     <ClerkProvider>
       <LanguageProvider>
         <GlobalProvider>
-          <html lang={(await params).lang}>
+          <html lang={(await params).lang} suppressHydrationWarning>
             <body
               className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >

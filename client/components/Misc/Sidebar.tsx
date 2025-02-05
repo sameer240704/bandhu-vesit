@@ -83,6 +83,7 @@ const Sidebar = () => {
             } items-center px-2`}
           >
             <UserButton
+              afterSignOutUrl={`/${currentLang}`}
               appearance={{
                 elements: {
                   userButtonAvatarBox: { height: "40px", width: "40px" },

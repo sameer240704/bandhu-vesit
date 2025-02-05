@@ -1,4 +1,8 @@
 {
+    "breadcrumb": {
+        "overview": "अवलोकन",
+        "recent": "हाल की गतिविधियाँ"
+    },
     "home": {
         "signIn": "साइन इन करें",
         "signUp": "साइन अप करें",
