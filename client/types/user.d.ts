@@ -10,7 +10,7 @@ interface ChatType {
   senderId: string;
   senderName: string;
   message: string;
-  createdAt?: Date;
+  createdAt?: string;
 }
 
 export { UserType, ChatType };

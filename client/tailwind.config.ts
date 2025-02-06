@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        chatBackground: "url('/images/chatBg.png')",
+      },
       colors: {
         purple: {
           "100": "#F2E6F8",

@@ -1,31 +1,35 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { socket } from "@/socket";
+import { FaUserCircle } from "react-icons/fa";
 import {
   uploadChatMessage,
   getAllChatMessages,
+  ChatMessage,
 } from "@/lib/actions/chat.action";
-
-interface ChatMessage {
-  userId: string;
-  userName: string;
-  message: string;
-  imageUrl?: string;
-  createdAt: string;
-}
+import { useUser } from "@clerk/nextjs";
+import { Input } from "../ui/input";
+import { IoIosSend } from "react-icons/io";
+import Image from "next/image";
+import { Logo } from "@/public/images";
+import { BsThreeDotsVertical, BsSearch } from "react-icons/bs";
 
 const ChatComponent = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+
+  const currentUserId = user?.publicMetadata?.userId;
+  const currentUserName = user?.username;
 
   useEffect(() => {
     async function fetchChats() {
       const response = await getAllChatMessages();
-      if (response.success) {
-        // setMessages(response?.data);
+      if (response.success && response.data) {
+        setMessages(response.data);
       }
     }
     fetchChats();
@@ -46,52 +50,102 @@ const ChatComponent = () => {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const chatData = {
-      userId: "67a3ba1ee7ba9e16cdbc72fb",
-      userName: "sameer42",
+    const chatData: ChatMessage = {
+      senderId: currentUserId as string,
+      senderName: currentUserName as string,
       message: newMessage,
-      imageUrl: "",
     };
 
-    // const response = await uploadChatMessage(chatData);
-    // if (response.success) {
-    //   socket.emit("sendMessage", chatData);
-    //   setNewMessage("");
-    // }
+    try {
+      const response = await uploadChatMessage(chatData);
+      if (response.success && response.data) {
+        socket.emit("sendMessage", response.data);
+        setNewMessage("");
+      }
+    } catch (error) {
+      console.error("Failed to send message", error);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
   };
 
   return (
-    <div className="flex flex-col h-[500px] w-[400px] border border-gray-300 rounded-lg">
-      <div className="flex-1 overflow-y-auto p-2">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`mb-2 p-2 rounded-lg ${
-              msg.userId === "65abc123xyz" ? "bg-blue-300" : "bg-gray-200"
-            }`}
-          >
-            <strong>{msg.userName}:</strong> {msg.message}
-          </div>
-        ))}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col h-[850px] w-1/3 bg-white border-2 border-purple-100 rounded-xl shadow-xl overflow-hidden"
+    >
+      <div className="px-4 py-3 flex justify-between items-center font-bold text-lg text-center border-b border-purple-100">
+        <Image src={Logo} alt="Logo" className="h-8 w-auto" />
+
+        <span className="flex-center gap-x-5">
+          <BsSearch className="h-5 w-auto hover:cursor-pointer" />
+          <BsThreeDotsVertical className="h-5 w-auto hover:cursor-pointer" />
+        </span>
+      </div>
+
+      <div className="bg-chatBackground bg-cover bg-center flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+        <AnimatePresence>
+          {messages.map((msg) => (
+            <motion.div
+              key={msg._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`flex items-start space-x-2 ${
+                msg.senderId === currentUserId
+                  ? "flex-row-reverse space-x-reverse"
+                  : ""
+              }`}
+            >
+              <FaUserCircle
+                className={`h-8 w-8 ${
+                  msg.senderId === currentUserId
+                    ? "text-limeGreen-600"
+                    : "text-purple-600"
+                }`}
+              />
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className={`max-w-[80%] p-3 rounded-xl shadow-md border ${
+                  msg.senderId === currentUserId
+                    ? "bg-white text-limeGreen-900 border-limeGreen-100"
+                    : "bg-purple-100 text-purple-900 border-purple-100"
+                }`}
+              >
+                <div className="font-bold text-md mb-1">{msg?.senderName}</div>
+                <h6 className="text-sm font-medium">{msg.message}</h6>
+              </motion.div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-2 border-t flex">
-        <input
+      <div className="p-4 bg-white border-t border-purple-100 flex items-center space-x-2">
+        <Input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 p-2 border rounded-md"
+          onKeyPress={handleKeyPress}
+          className="h-10 flex-1 p-3 bg-white text-purple-900 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
           placeholder="Type a message..."
         />
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={sendMessage}
-          className="ml-2 p-2 bg-blue-500 text-white rounded-md"
+          className="p-1.5 border border-purple-200 text-purple-500 hover:text-white rounded-lg hover:bg-purple-500 transition-colors"
         >
-          Send
-        </button>
+          <IoIosSend className="h-6 w-auto" />
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

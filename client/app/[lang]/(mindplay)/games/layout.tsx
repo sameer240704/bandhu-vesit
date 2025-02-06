@@ -6,7 +6,7 @@ export default function MindPlayLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="h-screen flex">
+    <div className="h-full flex">
       <main className="h-full w-full flex flex-col justify-start">
         {children}
       </main>
