@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -52,11 +53,11 @@ const ChatComponent = () => {
       imageUrl: "",
     };
 
-    const response = await uploadChatMessage(chatData);
-    if (response.success) {
-      socket.emit("sendMessage", chatData);
-      setNewMessage("");
-    }
+    // const response = await uploadChatMessage(chatData);
+    // if (response.success) {
+    //   socket.emit("sendMessage", chatData);
+    //   setNewMessage("");
+    // }
   };
 
   return (
