@@ -24,7 +24,7 @@ const ChatComponent = () => {
     async function fetchChats() {
       const response = await getAllChatMessages();
       if (response.success) {
-        setMessages(response?.data);
+        // setMessages(response?.data);
       }
     }
     fetchChats();
