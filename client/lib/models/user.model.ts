@@ -15,7 +15,7 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true },
   userName: { type: String, required: true },
   coins: { type: Number, required: true, default: 100 },
-  profileImageUrl: { type: String, required: true },
+  profileImageUrl: { type: String },
 });
 
 const User = models.User || model<MindPlayUser>("User", UserSchema);

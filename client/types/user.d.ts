@@ -6,4 +6,11 @@ interface UserType {
   profileImageUrl: string;
 }
 
-export { UserType };
+interface ChatType {
+  senderId: string;
+  senderName: string;
+  message: string;
+  createdAt?: Date;
+}
+
+export { UserType, ChatType };

@@ -1,7 +1,12 @@
+import ChatComponent from "@/components/Universe/ChatComponent";
 import React from "react";
 
 const MindplayUniversePage = () => {
-  return <div>MindplayUniversePage</div>;
+  return (
+    <div>
+      <ChatComponent />
+    </div>
+  );
 };
 
 export default MindplayUniversePage;

@@ -53,7 +53,6 @@ export async function POST(req: Request) {
   // Do something with payload
   // For this guide, log payload to console
   const eventType = evt.type;
-  console.log(eventType);
 
   // Adding user in MongoDB
   if (eventType === "user.created") {
@@ -67,8 +66,6 @@ export async function POST(req: Request) {
       email: email_addresses[0].email_address,
       profileImageUrl: image_url,
     };
-
-    console.error(user);
 
     const newUser = await createUser(user);
 
