@@ -32,7 +32,7 @@ const Sidebar = () => {
             <Image
               src={Logo}
               alt="MindPlay Logo"
-              className="h-10 w-auto mb-5"
+              className="h-10 w-auto mb-5 tour-logo"
             />
           </div>
 
