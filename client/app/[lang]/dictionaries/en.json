@@ -9,8 +9,11 @@
         "motor": "Motor Skills",
         "emotional": "Emotional Well-being",
         "social": "Social Interaction",
+        "game-flow": "Game Flow",
         "settings": "Settings",
-        "profile": "Profile"
+        "profile": "Profile",
+        "chatbot": "MindPlay Chatbot",
+        "news": "News & Insights"
     },
     "home": {
         "signIn": "Sign In",
@@ -28,7 +31,16 @@
         "motor": "Motor Skills",
         "emotional": "Emotional Well-being",
         "social": "Social Interaction",
+        "game-flow": "Game Flow",
         "settings": "Settings",
-        "profile": "Profile"
+        "profile": "Profile",
+        "chatbot": "MindPlay Chatbot",
+        "news": "News & Insights"
+    },
+    "chatbot": {
+        "title": "mindplay.ai",
+        "desc": "Ask your doubts to our personalized chatbot",
+        "ask": "Ask",
+        "placeholder": "Type your message..."
     }
 }

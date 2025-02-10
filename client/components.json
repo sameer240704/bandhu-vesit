@@ -2,9 +2,9 @@
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
   "rsc": true,
-  "tsx": true,
+  "tsx": false,
   "tailwind": {
-    "config": "tailwind.config.ts",
+    "config": "tailwind.config.mjs",
     "css": "app/globals.css",
     "baseColor": "zinc",
     "cssVariables": true,
