@@ -1,7 +1,6 @@
 "use client";
 
 import Experience from "@/components/Chatbot/Experience";
-import React from "react";
 
 const ChatbotPage = () => {
   return (

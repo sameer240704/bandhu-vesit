@@ -5,12 +5,25 @@ import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { Logo } from "@/public/images";
 
-export const TypingBox = ({ setMessage, loading, setLoading }) => {
+export const TypingBox = ({
+  setMessage,
+  loading,
+  setLoading,
+  setAnimationNumber,
+}) => {
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const recognition = useRef(null);
   const audioRef = useRef(null);
   const { dict } = useLanguage();
+
+  const AnimationTypes = {
+    idle: { animation: 2, name: "Idle", emoji: "👤" },
+    wave: { animation: 12, name: "Wave", emoji: "👋" },
+    thumbsup: { animation: 9, name: "Thumbs Up", emoji: "👍" },
+    dance: { animation: 0, name: "Dance", emoji: "🕺" },
+    run: { animation: 6, name: "Run", emoji: "🏃" },
+  };
 
   useEffect(() => {
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
@@ -103,9 +116,9 @@ export const TypingBox = ({ setMessage, loading, setLoading }) => {
   };
 
   return (
-    <div className="z-10 w-[600px] flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
+    <div className="z-10 w-[620px] flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
       <div>
-        <Image src={Logo} className="h-7 w-auto" />
+        <Image src={Logo} alt="mindplay" className="h-7 w-auto" />
         <p className="text-white/65">{dict?.chatbot?.desc}</p>
       </div>
 
@@ -159,6 +172,19 @@ export const TypingBox = ({ setMessage, loading, setLoading }) => {
           <audio ref={audioRef} />
         </div>
       )}
+
+      <div className="mt-2 w-full flex gap-3">
+        {Object.values(AnimationTypes).map((anim) => (
+          <div
+            key={anim.name}
+            className="flex items-center justify-center gap-2 bg-slate-800/60 p-2 px-4 rounded-full text-white shadow-inner shadow-slate-900/60 hover:cursor-pointer"
+            onClick={() => setAnimationNumber(anim.animation)}
+          >
+            <span className="text-lg">{anim.emoji}</span>
+            <span>{anim.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

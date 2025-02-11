@@ -16,7 +16,7 @@ const Navbar = () => {
       <div className="mx-auto px-10">
         <div className="flex justify-between items-center h-16">
           <Link href={`/${currentLang}`} className="flex items-center">
-            <Image src={Logo} alt="Logo" className="h-12 w-auto" />
+            <Image src={Logo} alt="mindplay" className="h-12 w-auto" />
           </Link>
 
           <div className="flex items-center justify-between space-x-6">

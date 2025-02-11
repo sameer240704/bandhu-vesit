@@ -35,12 +35,16 @@
         "settings": "Settings",
         "profile": "Profile",
         "chatbot": "MindPlay Chatbot",
-        "news": "News & Insights"
+        "news": "News & Insights",
+        "cb": "Bot",
+        "ps": "Person"
     },
     "chatbot": {
         "title": "mindplay.ai",
         "desc": "Ask your doubts to our personalized chatbot",
         "ask": "Ask",
-        "placeholder": "Type your message..."
+        "placeholder": "Type your message...",
+        "chatbot": "Chatbot",
+        "person": "Person"
     }
 }

@@ -30,3 +30,7 @@ async def ai_financial_path(
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Something went wrong: {str(e)}")
+    
+@app.post("/ai-chatbot")
+async def ai_chatbot():
+    print("Hello")

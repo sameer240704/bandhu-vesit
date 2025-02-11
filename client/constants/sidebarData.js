@@ -26,7 +26,7 @@ export const sidebarData = [
         icon: RiEmotionLaughLine,
       },
       { title: "social", route: "/games/social", icon: SlPeople },
-      { title: "chatbot", route: "/games/chatbot", icon: TbMessageChatbot },
+      { title: "chatbot", route: "/games/cb/chatbot", icon: TbMessageChatbot },
     ],
   },
   {

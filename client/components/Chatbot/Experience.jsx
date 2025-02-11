@@ -59,6 +59,7 @@ const Loader = ({ progress }) => {
 const Experience = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [animationNumber, setAnimationNumber] = useState(2);
   const { progress } = useProgress();
 
   return (
@@ -72,6 +73,7 @@ const Experience = () => {
           setMessage={setMessage}
           loading={loading}
           setLoading={setLoading}
+          setAnimationNumber={setAnimationNumber}
         />
       </div>
       <div
@@ -108,11 +110,12 @@ const Experience = () => {
             scale={1}
           /> */}
           <Chatbot
-            position={[-1.7, -0.5, -0.2]}
-            scale={5}
+            position={[-1.7, -0.8, -0.2]}
+            scale={0.4}
             rotation-x={degToRad(5)}
             rotation-y={degToRad(35)}
             rotation-z={degToRad(-1)}
+            animationNumber={animationNumber}
           />
         </Suspense>
         {/* <CameraManager /> */}

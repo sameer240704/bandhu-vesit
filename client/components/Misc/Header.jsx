@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import LanguageSwitcher from "./LanguageButton";
 import { Button } from "../ui/button";
 import { Bell } from "lucide-react";
@@ -14,11 +14,14 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import ChatbotSwitcher from "../Chatbot/ChatbotSwitcher";
 
 const Header = () => {
   const pathname = usePathname();
   const { dict, currentLang } = useLanguage();
   const [breadcrumbItems, setBreadcrumbItems] = useState([]);
+
+  const chatbotPath = pathname.split("/").filter(Boolean).pop();
 
   useEffect(() => {
     if (!pathname) return;
@@ -73,6 +76,7 @@ const Header = () => {
           </h1>
         </div>
         <div className="flex-center gap-x-3">
+          {chatbotPath === "chatbot" && <ChatbotSwitcher />}
           <LanguageSwitcher currentLang={currentLang} />
           <Button variant="outline" size="icon">
             <Bell className="h-4 w-4" />

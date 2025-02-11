@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { GlobalProvider } from "@/context/GlobalContext";
+import { ChatbotProvider } from "@/context/ChatbotContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,13 +29,15 @@ export default async function RootLayout({ children, params }) {
     <ClerkProvider>
       <LanguageProvider>
         <GlobalProvider>
-          <html lang={(await params).lang} suppressHydrationWarning>
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-              {children}
-            </body>
-          </html>
+          <ChatbotProvider>
+            <html lang={(await params).lang} suppressHydrationWarning>
+              <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+              >
+                {children}
+              </body>
+            </html>
+          </ChatbotProvider>
         </GlobalProvider>
       </LanguageProvider>
     </ClerkProvider>

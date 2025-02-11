@@ -3,17 +3,26 @@ import { useEffect, useRef } from "react";
 import { AnimationMixer } from "three";
 import { useFrame } from "@react-three/fiber";
 
-const Chatbot = ({ ...props }) => {
+const Chatbot = ({ animationNumber, ...props }) => {
   const { scene, animations } = useGLTF("/models/chatbot.glb");
   const mixer = useRef(null);
+  const actionRef = useRef(null);
 
   useEffect(() => {
     if (animations.length) {
-      mixer.current = new AnimationMixer(scene);
-      const action = mixer.current.clipAction(animations[1]);
-      action.play();
+      if (!mixer.current) {
+        mixer.current = new AnimationMixer(scene);
+      }
+
+      if (actionRef.current) {
+        actionRef.current.fadeOut(0.2);
+      }
+
+      const action = mixer.current.clipAction(animations[animationNumber]);
+      action.reset().fadeIn(0.2).play();
+      actionRef.current = action;
     }
-  }, [animations, scene]);
+  }, [animationNumber, animations, scene]);
 
   useFrame((state, delta) => {
     mixer.current?.update(delta);
