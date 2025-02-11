@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.4.2",
+    "jotai": "2.8.0",
     "lucide-react": "^0.475.0",
     "mongoose": "^8.10.0",
     "negotiator": "^1.0.0",

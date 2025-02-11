@@ -122,7 +122,7 @@ export const TypingBox = ({
         <p className="text-white/65">{dict?.chatbot?.desc}</p>
       </div>
 
-      {!loading ? (
+      {loading ? (
         <div className="flex justify-center items-center">
           <span className="relative flex h-6 w-6">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-100 opacity-75"></span>

@@ -15,7 +15,8 @@
         "chatbot": "MindPlay Chatbot",
         "news": "News & Insights",
         "cb": "Bot",
-        "ps": "Person"
+        "ps": "Person",
+        "world": "MindPlay World"
     },
     "home": {
         "signIn": "Sign In",
