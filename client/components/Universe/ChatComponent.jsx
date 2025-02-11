@@ -88,7 +88,7 @@ const ChatComponent = () => {
         </span>
       </div>
 
-      <div className="bg-chatBackground bg-cover bg-center flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+      <div className="bg-chatBg bg-cover bg-center flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
         <AnimatePresence>
           {messages.map((msg) => (
             <motion.div

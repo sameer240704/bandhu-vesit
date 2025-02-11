@@ -298,7 +298,7 @@ const GameFlow = () => {
   ];
 
   return (
-    <div className="mx-auto space-y-8 py-2">
+    <div className="mx-auto space-y-8 py-2 pr-2">
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-2xl">
         <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200">
           <div className="flex items-center mb-2">

@@ -13,7 +13,9 @@
         "settings": "Settings",
         "profile": "Profile",
         "chatbot": "MindPlay Chatbot",
-        "news": "News & Insights"
+        "news": "News & Insights",
+        "cb": "Bot",
+        "ps": "Person"
     },
     "home": {
         "signIn": "Sign In",

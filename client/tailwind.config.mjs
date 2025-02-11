@@ -9,7 +9,8 @@ export default {
 	theme: {
 		extend: {
 			backgroundImage: {
-				chatbotBg: "url('/images/background.png')"
+				chatbotBg: "url('/images/background.png')",
+				chatBg: "url('/images/chatBg.png')"
 			},
 			colors: {
 				purple: {

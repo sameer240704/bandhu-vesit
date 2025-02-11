@@ -34,7 +34,6 @@ export const sidebarData = [
     items: [
       { title: "game-flow", route: "/user/game-flow", icon: RiFlowChart },
       { title: "news", route: "/user/news", icon: FaRegNewspaper },
-      { title: "settings", route: "/user/settings", icon: IoSettingsOutline },
       { title: "profile", route: "/user/profile", icon: LuUserRound },
     ],
   },
