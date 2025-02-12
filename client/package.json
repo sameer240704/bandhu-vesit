@@ -14,8 +14,15 @@
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.6",
+    "@react-spring/three": "9.6.1",
     "@react-three/drei": "9.118.0",
     "@react-three/fiber": "9.0.0-beta.0",
+    "@react-three/rapier": "1.5.0",
+    "@react-three/uikit": "0.8.4",
+    "@react-three/uikit-apfel": "0.8.4",
+    "@react-three/xr": "6.4.9",
+    "@tonejs/midi": "2.0.28",
+    "@wavesurfer/react": "1.0.7",
     "@xyflow/react": "^12.4.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -38,6 +45,7 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.173.0",
     "three-stdlib": "^2.35.13",
+    "wavesurfer.js": "7.8.8",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

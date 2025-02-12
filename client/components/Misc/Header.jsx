@@ -1,9 +1,9 @@
 "use client";
 
-import { useParams, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import LanguageSwitcher from "./LanguageButton";
 import { Button } from "../ui/button";
-import { Bell } from "lucide-react";
+import { Bell, ArrowLeft } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,10 +18,14 @@ import ChatbotSwitcher from "../Chatbot/ChatbotSwitcher";
 
 const Header = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { dict, currentLang } = useLanguage();
   const [breadcrumbItems, setBreadcrumbItems] = useState([]);
 
   const chatbotPath = pathname.split("/").filter(Boolean).pop();
+
+  // Check if the current route is within any game category
+  const isInGameRoute = /^\/[a-z]{2}\/games\/[a-z-]+\/[a-z-]+$/i.test(pathname);
 
   useEffect(() => {
     if (!pathname) return;
@@ -76,6 +80,12 @@ const Header = () => {
           </h1>
         </div>
         <div className="flex-center gap-x-3">
+          {isInGameRoute && (
+            <Button variant="destructive" onClick={() => router.back()}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {dict?.breadcrumb?.go_back}
+            </Button>
+          )}
           {chatbotPath === "chatbot" && <ChatbotSwitcher />}
           <LanguageSwitcher currentLang={currentLang} />
           <Button variant="outline" size="icon">

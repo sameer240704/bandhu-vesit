@@ -12,21 +12,24 @@ const handler = app.getRequestHandler();
 let onlineUsers = new Map();
 
 const addUser = (username, socketId) => {
-    const userExists = onlineUsers.find(user => user.socketId === socketId);
-
-    if (!userExists) {
-        onlineUsers.push({ username, socketId });
-        console.log(`${username} added!`)
+    if (!onlineUsers.has(socketId)) {
+        onlineUsers.set(socketId, username);
+        console.log(`${username} added!`);
     }
 }
 
 const removeUser = (socketId) => {
-    onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
-    console.log("User removed")
+    onlineUsers.delete(socketId);
+    console.log("User removed");
 }
 
 const getUserDetails = (username) => {
-    return onlineUsers.find((user) => user.username === username)
+    for (const [socketId, user] of onlineUsers.entries()) {
+        if (user === username) {
+            return { username: user, socketId };
+        }
+    }
+    return null;
 }
 
 app.prepare().then(() => {
