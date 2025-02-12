@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Globe, Clock, ExternalLink, Search, Loader } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const CATEGORIES = [
   {
@@ -78,6 +79,7 @@ const NewsPage = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { dict } = useLanguage();
 
   const fetchNews = async (category) => {
     setLoading(true);
@@ -158,7 +160,7 @@ const NewsPage = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search news..."
+              placeholder={dict?.news?.search_placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-purple-700 bg-white dark:bg-gray-800 text-purple-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -175,7 +177,7 @@ const NewsPage = () => {
                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >
-                {category.label}
+                {dict?.news?.[category.id]}
               </button>
             ))}
           </div>
@@ -185,7 +187,7 @@ const NewsPage = () => {
           <div className="flex items-center justify-center py-12">
             <Loader className="h-8 w-8 text-purple-600 animate-spin" />
             <span className="ml-2 text-gray-600 dark:text-gray-400">
-              Loading news...
+              {dict?.news?.loading}
             </span>
           </div>
         )}

@@ -48,6 +48,21 @@
         "ask": "Ask",
         "placeholder": "Type your message...",
         "chatbot": "Chatbot",
-        "person": "Person"
+        "person": "Person",
+        "idle": "Idle",
+        "wave": "Wave",
+        "dance": "Dance",
+        "run": "Run",
+        "thumbsup": "Thumbs Up"
+    },
+    "news": {
+        "all": "All",
+        "cognitive": "Cognitive Development",
+        "motor": "Motor Skills",
+        "emotional": "Emotional Well-being",
+        "social": "Social Interaction",
+        "skills": "Skills Training",
+        "loading": "Loading news...",
+        "search_placeholder": "Search news..."
     }
 }

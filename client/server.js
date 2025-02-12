@@ -9,7 +9,7 @@ const PORT = 3000;
 const app = next({ dev, hostname, PORT });
 const handler = app.getRequestHandler();
 
-let onlineUsers = [];
+let onlineUsers = new Map();
 
 const addUser = (username, socketId) => {
     const userExists = onlineUsers.find(user => user.socketId === socketId);

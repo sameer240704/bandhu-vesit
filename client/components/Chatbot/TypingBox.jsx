@@ -18,11 +18,11 @@ export const TypingBox = ({
   const { dict } = useLanguage();
 
   const AnimationTypes = {
-    idle: { animation: 2, name: "Idle", emoji: "👤" },
-    wave: { animation: 12, name: "Wave", emoji: "👋" },
-    thumbsup: { animation: 9, name: "Thumbs Up", emoji: "👍" },
-    dance: { animation: 0, name: "Dance", emoji: "🕺" },
-    run: { animation: 6, name: "Run", emoji: "🏃" },
+    idle: { animation: 2, name: "idle", emoji: "👤" },
+    wave: { animation: 12, name: "wave", emoji: "👋" },
+    thumbsup: { animation: 9, name: "thumbsup", emoji: "👍" },
+    dance: { animation: 0, name: "dance", emoji: "🕺" },
+    run: { animation: 6, name: "run", emoji: "🏃" },
   };
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export const TypingBox = ({
     <div className="z-10 w-[620px] flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
       <div>
         <Image src={Logo} alt="mindplay" className="h-7 w-auto" />
-        <p className="text-white/65">{dict?.chatbot?.desc}</p>
+        <p className="text-purple-100 font-semibold">{dict?.chatbot?.desc}</p>
       </div>
 
       {loading ? (
@@ -181,7 +181,7 @@ export const TypingBox = ({
             onClick={() => setAnimationNumber(anim.animation)}
           >
             <span className="text-lg">{anim.emoji}</span>
-            <span>{anim.name}</span>
+            <span>{dict?.chatbot?.[anim.name]}</span>
           </div>
         ))}
       </div>
