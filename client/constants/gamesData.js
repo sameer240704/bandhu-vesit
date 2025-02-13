@@ -48,3 +48,5 @@ export const cognitiveGames = [
     gameLink: "/number-match",
   },
 ];
+
+export const socialGames = []
