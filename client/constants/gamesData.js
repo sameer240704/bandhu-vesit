@@ -1,4 +1,9 @@
-import { colorGame, FlappyBird, MusicMania, numberMatch } from "@/public/images";
+import {
+  colorGame,
+  FlappyBird,
+  MusicMania,
+  numberMatch,
+} from "@/public/images";
 
 export const motorGames = [
   {
@@ -20,7 +25,7 @@ export const motorGames = [
     imageUrl: FlappyBird,
     isHot: false,
     gameLink: "/flappy-bird",
-  }
+  },
 ];
 
 export const emotionalGames = [
@@ -49,4 +54,15 @@ export const cognitiveGames = [
   },
 ];
 
-export const socialGames = []
+export const socialGames = [
+  {
+    title: "Scenario Saga",
+    publisher: "MindPlay",
+    rating: "4.7",
+    players: "982",
+    views: "424",
+    imageUrl: MusicMania,
+    isHot: true,
+    gameLink: "/scenario-saga",
+  },
+];
