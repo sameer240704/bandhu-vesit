@@ -1,4 +1,4 @@
-import { colorGame, MusicMania, numberMatch } from "@/public/images";
+import { colorGame, FlappyBird, MusicMania, numberMatch } from "@/public/images";
 
 export const motorGames = [
   {
@@ -11,6 +11,16 @@ export const motorGames = [
     isHot: true,
     gameLink: "/music-mania",
   },
+  {
+    title: "Flappy Bird",
+    publisher: "MindPlay",
+    rating: "4.1",
+    players: "644",
+    views: "1232",
+    imageUrl: FlappyBird,
+    isHot: false,
+    gameLink: "/flappy-bird",
+  }
 ];
 
 export const emotionalGames = [
@@ -28,7 +38,7 @@ export const emotionalGames = [
 
 export const cognitiveGames = [
   {
-    title: "Number Match - Memeory Game",
+    title: "Number Match - Memory Game",
     publisher: "MindPlay",
     rating: "4.8",
     players: "1828",
