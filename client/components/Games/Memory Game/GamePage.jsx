@@ -161,13 +161,15 @@ const GamePage = ({ onBack, gameState, onCardClick, getLevelConfig }) => {
                   >
                     <motion.div
                       initial={false}
-                      animate={{
-                        rotateY: card.isFlipped || card.isMatched ? 180 : 0,
-                      }}
+                      animate={
+                        {
+                          // rotateY: card.isFlipped || card.isMatched ? 180 : 0,
+                        }
+                      }
                       transition={{ duration: 0.6, type: "spring" }}
                     >
                       {card.isFlipped || card.isMatched ? (
-                        <div>{card.value}</div>
+                        <div className="">{card.value}</div>
                       ) : (
                         <div className="text-indigo-300 text-xl">?</div>
                       )}
