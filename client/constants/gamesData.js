@@ -2,6 +2,7 @@ import {
   colorGame,
   FlappyBird,
   MusicMania,
+  Nodulus,
   numberMatch,
 } from "@/public/images";
 
@@ -25,6 +26,16 @@ export const motorGames = [
     imageUrl: FlappyBird,
     isHot: false,
     gameLink: "/flappy-bird",
+  },
+  {
+    title: "Nodulus",
+    publisher: "MindPlay",
+    rating: "4.8",
+    players: "1928",
+    views: "2738",
+    imageUrl: Nodulus,
+    isHot: false,
+    gameLink: "/nodulus",
   },
 ];
 
