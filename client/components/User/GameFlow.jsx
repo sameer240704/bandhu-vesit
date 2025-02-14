@@ -122,15 +122,15 @@ const GameFlow = () => {
               activeTab === "conservative"
                 ? "Low"
                 : activeTab === "moderate"
-                ? "Moderate"
-                : "High"
+                  ? "Moderate"
+                  : "High"
             }  
             - **Financial Goal:** ${
               activeTab === "conservative"
                 ? "Capital preservation and stable returns."
                 : activeTab === "moderate"
-                ? "Balanced growth with manageable risk."
-                : "High growth potential with an aggressive approach."
+                  ? "Balanced growth with manageable risk."
+                  : "High growth potential with an aggressive approach."
             }  
             
             Please generate a structured financial plan that includes:  

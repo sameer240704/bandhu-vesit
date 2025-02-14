@@ -110,6 +110,7 @@ const VoiceControl = () => {
 
   const executeCommand = (command) => {
     const currentLanguage = currentLang || "en";
+    console.log(command);
 
     switch (command.action) {
       case "navigate":
@@ -125,8 +126,10 @@ const VoiceControl = () => {
             "flappy bird": `/${currentLanguage}/games/motor/flappy-bird`,
             nodulus: `/${currentLanguage}/games/motor/nodulus`,
             emotional: `/${currentLanguage}/games/emotional`,
+            "emotional games": `/${currentLanguage}/games/emotional`,
             "color paint": `/${currentLanguage}/games/emotional/color-paint`,
             social: `/${currentLanguage}/games/social`,
+            "social games": `/${currentLanguage}/games/social`,
             chatbot: `/${currentLanguage}/games/cb/chatbot`,
             "game flow": `/${currentLanguage}/user/game-flow`,
             news: `/${currentLanguage}/user/news`,

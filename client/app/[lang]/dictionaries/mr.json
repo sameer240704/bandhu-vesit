@@ -18,7 +18,18 @@
         "ps": "व्यक्ती",
         "world": "माइंडप्ले वर्ल्ड",
         "music-mania": "संगीत उन्माद",
+        "color-paint": "रंग आणि पेंट",
+        "number-match": "क्रमांक सामना",
+        "flappy-bird": "फ्लॅपी पक्षी",
+        "nodulus": "नोड्युलस",
         "go_back": "एक्झिट गेम"
+    },
+    "voice": {
+        "start_listening": "ऐकण्यास प्रारंभ करा",
+        "stop_listening": "ऐकणे थांबवा",
+        "listening": "ऐकत आहे",
+        "you_said": "आपण म्हणाले",
+        "error_processing": "त्रुटी प्रक्रिया कमांड"
     },
     "home": {
         "signIn": "साइन इन करा",
