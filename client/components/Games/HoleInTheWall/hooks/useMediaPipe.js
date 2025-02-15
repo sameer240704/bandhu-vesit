@@ -1,17 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useMediaPipe = (videoRef) => {
   const [pose, setPose] = useState(null);
   const [segmentationMask, setSegmentationMask] = useState(null);
   const [camera, setCamera] = useState(null);
-  const isMounted = useRef(true); // Track component mount status
-
-  useEffect(() => {
-    isMounted.current = true; // Set to true when component mounts
-    return () => {
-      isMounted.current = false; // Set to false when component unmounts
-    };
-  }, []);
 
   const initializeCamera = useCallback(async () => {
     try {
@@ -70,7 +62,7 @@ export const useMediaPipe = (videoRef) => {
       });
 
       poseInstance.onResults((results) => {
-        if (!isMounted.current) return; // Prevent state updates after unmount
+        console.log('MediaPipe Results:', results);
         if (results.segmentationMask) {
           setSegmentationMask(results);
         }
@@ -103,6 +95,7 @@ export const useMediaPipe = (videoRef) => {
 
   const stopMediaPipe = useCallback(() => {
     try {
+      // Proper cleanup sequence
       if (camera) {
         camera.stop();
         setCamera(null);
@@ -114,6 +107,7 @@ export const useMediaPipe = (videoRef) => {
       if (videoRef.current?.srcObject) {
         videoRef.current.srcObject.getTracks().forEach(track => {
           track.stop();
+          videoRef.current.srcObject.removeTrack(track);
         });
         videoRef.current.srcObject = null;
       }
@@ -121,7 +115,7 @@ export const useMediaPipe = (videoRef) => {
     } catch (error) {
       console.error('Error stopping MediaPipe:', error);
     }
-  }, [camera, pose, videoRef]);
+  }, [pose, camera, videoRef]);
 
   useEffect(() => {
     return () => {

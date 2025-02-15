@@ -1,27 +1,22 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import GameCanvas from "./GameCanvas";
 import StartMenu from "./StartMenu";
 import GameOverDialog from "./GameOverDialog";
-import ScoreDisplay from "./ScoreDisplay";
 import { useMediaPipe } from "./hooks/useMediaPipe";
 import ScriptLoader from "./ScriptLoader";
 import PoseOverlay from './PoseOverlay';
 import { GAME_CONFIG, WALLS } from './constants';
-import WallSystem from './WallSystem';
+import GamePhaseManager from './GamePhaseManager';
 
 const HoleInTheWallGame = () => {
-  // gameState: "menu", "camera-setup", "tracking-setup", "preview", "matching", "gameOver"
+  // gameState: "menu", "camera-setup", "tracking-setup", "playing", "gameOver"
   const [gameState, setGameState] = useState("menu");
   const [score, setScore] = useState(0);
-  const [currentWallIndex, setCurrentWallIndex] = useState(0);
-  const [previewTimer, setPreviewTimer] = useState(GAME_CONFIG.PREVIEW_DURATION / 1000);
-  const [matchingTimer, setMatchingTimer] = useState(GAME_CONFIG.MATCHING_DURATION / 1000);
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState(null);
   const videoRef = useRef(null);
-  const segmentationCanvasRef = useRef(null);
-  const gameCanvasRef = useRef(null);
   const [scriptsLoaded, setScriptsLoaded] = useState({
     camera: false,
     controls: false,
@@ -81,10 +76,15 @@ const HoleInTheWallGame = () => {
   };
 
   const handleStartGame = () => {
-    setGameState("preview");
+    setGameState("playing");
     setScore(0);
-    setCurrentWallIndex(0);
-    setPreviewTimer(GAME_CONFIG.PREVIEW_DURATION / 1000);
+    setCurrentLevel(1);
+    setIsPlaying(true);
+  };
+
+  const handleLevelComplete = () => {
+    setScore(prev => prev + GAME_CONFIG.SCORE_PER_LEVEL);
+    setCurrentLevel(prev => prev + 1);
   };
 
   const handleGameOver = () => {
@@ -106,97 +106,9 @@ const HoleInTheWallGame = () => {
     });
   };
 
-  // Preview Phase Timer
-  useEffect(() => {
-    if (gameState === "preview" && previewTimer > 0) {
-      const timer = setInterval(() => {
-        setPreviewTimer(prev => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (gameState === "preview") {
-      setGameState("matching");
-      setMatchingTimer(GAME_CONFIG.MATCHING_DURATION / 1000);
-    }
-  }, [gameState, previewTimer]);
-
-  // Matching Phase Timer
-  useEffect(() => {
-    if (gameState === "matching" && matchingTimer > 0) {
-      const timer = setInterval(() => {
-        setMatchingTimer(prev => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (gameState === "matching") {
-      evaluatePose();
-    }
-  }, [gameState, matchingTimer, segmentationMask]);
-
-  const evaluatePose = () => {
-    if (!segmentationMask?.poseLandmarks) {
-      handleGameOver();
-      return;
-    }
-
-    const currentWall = WALLS[currentWallIndex];
-    const outline = currentWall.outline;
-
-    // Function to check if a point is inside the polygon
-    const isPointInPolygon = (point, polygon, tolerance = 0.05) => {
-      let inside = false;
-      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const xi = polygon[i].x, yi = polygon[i].y;
-        const xj = polygon[j].x, yj = polygon[j].y;
-
-        const intersect = ((yi > point.y) !== (yj > point.y))
-          && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
-        if (intersect) inside = !inside;
-      }
-      return inside;
-    };
-
-    // Evaluate pose
-    const matchingJoints = GAME_CONFIG.BODY_JOINTS.filter(jointName => {
-      const landmark = segmentationMask.poseLandmarks.find(lm => lm.name === jointName);
-      if (!landmark) return false;
-
-      return isPointInPolygon({ x: landmark.x, y: landmark.y }, outline);
-    });
-
-    const matchPercentage = matchingJoints.length / GAME_CONFIG.BODY_JOINTS.length;
-
-    if (matchPercentage >= GAME_CONFIG.SUCCESS_THRESHOLD) {
-      // Success
-      setScore(prev => prev + GAME_CONFIG.SCORE_PER_WALL);
-      if (currentWallIndex < WALLS.length - 1) {
-        setCurrentWallIndex(prev => prev + 1);
-        setGameState("preview");
-        setPreviewTimer(GAME_CONFIG.PREVIEW_DURATION / 1000);
-      } else {
-        // Game won
-        handleGameOver();
-      }
-    } else {
-      // Game Over
-      handleGameOver();
-    }
-  };
-
-  const currentWall = WALLS[currentWallIndex];
-
   return (
     <>
       <ScriptLoader onLoad={handleScriptsLoaded} />
-
-      {/* Add debug info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-0 left-0 bg-black/50 text-white p-2 text-sm z-[100]">
-          Camera: {scriptsLoaded.camera ? '✅' : '❌'}<br />
-          Controls: {scriptsLoaded.controls ? '✅' : '❌'}<br />
-          Drawing: {scriptsLoaded.drawing ? '✅' : '❌'}<br />
-          Pose: {scriptsLoaded.pose ? '✅' : '❌'}<br />
-          Window.Pose: {window.Pose ? '✅' : '❌'}
-        </div>
-      )}
 
       <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-purple-100">
         {error && (
@@ -263,134 +175,49 @@ const HoleInTheWallGame = () => {
           </div>
         )}
 
-        {/* Game Phases */}
-        {gameState === "preview" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-40">
-            <img src={currentWall.image} alt="Wall" className="max-w-full max-h-full" />
-            <div className="absolute top-4 left-4 text-white text-2xl">
-              Preview: {previewTimer}
-            </div>
-          </div>
-        )}
-
-        {gameState === "matching" && (
-          <>
-            <div className="absolute inset-0 z-30">
-              <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover z-10"
-                style={{ transform: 'scaleX(-1)' }}
-                playsInline
-                autoPlay
-                muted
-              />
-              <canvas
-                ref={gameCanvasRef}
-                className="absolute inset-0 w-full h-full z-20"
-              />
-              {/* Render the outline on the canvas */}
-              {currentWall && (
-                <OutlineRenderer
-                  outline={currentWall.outline}
-                  videoWidth={videoWidth}
-                  videoHeight={videoHeight}
-                />
-              )}
-              <div className="absolute top-4 left-4 text-white text-2xl">
-                Match: {matchingTimer}
-              </div>
-            </div>
-            <PoseOverlay
-              landmarks={segmentationMask?.poseLandmarks}
-              visible={true}
-              videoWidth={videoWidth}
-              videoHeight={videoHeight}
-            />
-          </>
-        )}
-
-        {gameState === "gameOver" && (
-          <GameOverDialog score={score} onRetry={handleRetry} />
-        )}
-
-        {/* Video and Game Canvas */}
+        {/* Main Game Content */}
         <div className="relative w-full max-w-[1280px] mx-auto aspect-video">
           <video
             ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover z-10"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: 'scaleX(-1)',
-              border: '4px solid red',
-              filter: 'brightness(0.5)'
+              filter: 'brightness(1.1) contrast(1.1)'
             }}
             playsInline
             autoPlay
             muted
           />
           
-          {/* Segmentation Mask Canvas */}
-          <canvas
-            ref={segmentationCanvasRef}
-            className="absolute inset-0 w-full h-full z-20"
-          />
-          
-          {/* Pose Overlay */}
           <PoseOverlay
             landmarks={segmentationMask?.poseLandmarks}
-            visible={gameState === 'playing'}
-            videoWidth={videoWidth}
-            videoHeight={videoHeight}
+            videoWidth={videoRef.current?.videoWidth}
+            videoHeight={videoRef.current?.videoHeight}
+            className="absolute inset-0 w-full h-full"
           />
-          
-          {/* Wall Game Canvas */}
-          <canvas
-            ref={gameCanvasRef}
-            className="absolute inset-0 w-full h-full z-30"
-          />
-          
-          {/* Score Display */}
-          <ScoreDisplay score={score} />
         </div>
+
+        {gameState === "playing" && (
+          <div className="absolute inset-0 z-20">
+            {/* Game Phase Manager */}
+            <GamePhaseManager
+              poseLandmarks={segmentationMask?.poseLandmarks}
+              onSuccess={handleLevelComplete}
+              onFail={handleGameOver}
+            />
+            
+            {/* Score Display */}
+            <div className="absolute top-4 right-4 bg-black/50 text-white p-4 rounded-lg text-xl font-bold z-40">
+              Level: {currentLevel} | Score: {score}
+            </div>
+          </div>
+        )}
+
+        {gameState === "gameOver" && (
+          <GameOverDialog score={score} onRetry={handleRetry} />
+        )}
       </div>
     </>
-  );
-};
-
-// OutlineRenderer Component
-const OutlineRenderer = ({ outline, videoWidth, videoHeight }) => {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !outline) return;
-
-    canvas.width = videoWidth;
-    canvas.height = videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.beginPath();
-    outline.forEach((point, index) => {
-      const x = point.x * videoWidth;
-      const y = point.y * videoHeight;
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    });
-    ctx.closePath();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-  }, [outline, videoWidth, videoHeight]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-30"
-      style={{ pointerEvents: 'none' }}
-    />
   );
 };
 
