@@ -21,16 +21,6 @@ export const motorGames = [
     gameLink: "/music-mania",
   },
   {
-    title: "Nodulus",
-    publisher: "MindPlay",
-    rating: "4.8",
-    players: "1928",
-    views: "2738",
-    imageUrl: Nodulus,
-    isHot: false,
-    gameLink: "/nodulus",
-  },
-  {
     title: "Balloon Pop",
     publisher: "MindPlay",
     rating: "4.9",
@@ -96,6 +86,16 @@ export const cognitiveGames = [
     isHot: true,
     gameLink: "/number-match",
   },
+  {
+    title: "Nodulus",
+    publisher: "MindPlay",
+    rating: "4.8",
+    players: "1928",
+    views: "2738",
+    imageUrl: Nodulus,
+    isHot: false,
+    gameLink: "/nodulus",
+  },
 ];
 
 export const socialGames = [
@@ -111,17 +111,3 @@ export const socialGames = [
   },
 ];
 
-export const gamesData = {
-  motor: {
-    "balloon-pop": {
-      title: "Balloon Pop",
-      description: "Pop balloons using your hands in this AR game!",
-      image: "/images/games/balloon-pop.jpg",
-      path: "/games/motor/balloon-pop",
-      category: "motor",
-      difficulty: "medium",
-      players: "1 player",
-      isHot: true,
-    },
-  },
-};

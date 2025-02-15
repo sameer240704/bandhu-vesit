@@ -1,33 +1,16 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 const ColoringGameSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-  categories: [
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  completed_levels: [{ type: Schema.Types.ObjectId, ref: "ColoringGame" }], // Track completed levels
+  colored_images: [
     {
-      name: { type: String, required: true, unique: true },
-      description: { type: String },
-      levels: [
-        {
-          name: { type: number, required: true },
-          description: { type: String },
-        },
-      ],
-    },
-  ],
-  images: [
-    {
-      level: {
-        type: number,
+      image: {
+        type: Schema.Types.ObjectId,
+        ref: "ColoringGame",
         required: true,
       },
-      category: {
-        type: String,
-        required: true,
-      },
-      image_url: { type: String, required: true },
-      name: { type: String, required: true },
-      description: { type: String },
-      colors: [
+      colors_used: [
         {
           name: { type: String, required: true },
           hex_code: { type: String, required: true },
@@ -35,6 +18,9 @@ const ColoringGameSchema = new Schema({
       ],
     },
   ],
+  high_scores: { type: Map, of: Number },
 });
 
-export default model("ColoringGame", ColoringGameSchema);
+const ColoringGame =
+  models.ColoringGame || model("ColoringGame", ColoringGameSchema);
+export { ColoringGame };

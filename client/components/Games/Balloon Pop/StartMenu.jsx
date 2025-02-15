@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 
 const StartMenu = ({ onStart, highScore }) => {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-      <div className="bg-white p-8 rounded-2xl shadow-xl text-center space-y-6">
+    <div className=" flex flex-col items-center justify-center backdrop-blur-sm z-50">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl text-center space-y-6">
         <h1 className="text-4xl font-bold text-purple-600">Balloon Pop</h1>
         <p className="text-gray-600">Use your hand to pop the balloons!</p>
         {highScore > 0 && (

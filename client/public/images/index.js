@@ -9,19 +9,21 @@ import BalloonPop from "./balloonpop.png";
 import HoleInTheWall from "./holeinthewall.jpg";
 import WhiteBoard from "./whiteboard.png";
 import AvatarBuilder from "./avatar-builder.jpeg";
-import Coins from "./coins.png"
+import Coins from "./coins.png";
+import background from "./whiteboard_bg.avif";
 
 export {
-    FlappyBird,
-    Logo,
-    MusicMania,
-    Thinking,
-    colorGame,
-    numberMatch,
-    Nodulus,
-    BalloonPop,
-    HoleInTheWall,
-    WhiteBoard,
-    AvatarBuilder,
-    Coins
+  FlappyBird,
+  Logo,
+  MusicMania,
+  Thinking,
+  colorGame,
+  numberMatch,
+  Nodulus,
+  BalloonPop,
+  HoleInTheWall,
+  WhiteBoard,
+  AvatarBuilder,
+  background,
+  Coins,
 };
