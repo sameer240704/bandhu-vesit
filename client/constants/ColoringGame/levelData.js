@@ -1,62 +1,56 @@
-export const LEVEL_DATA = {
-  animals: {
-    title: "Animals",
+import { TEMPLATE_MAPPING } from "@/components/Games/Coloring Game/PaintGame";
+
+// constants/ColoringGame/templateData.js
+export const TEMPLATE_DATA = {
+  vehicles: {
+    title: "Vehicles",
+    description: "Color different types of vehicles",
     levels: [
       {
         id: 1,
-        image: "/images/animals/level1.jpg",
-        description: "Simple Animal Shapes",
+        templateType: "car",
+        description: "Simple car outline",
+        difficulty: "Easy",
+        minScore: 80,
+        expectedTime: 300,
+        image: TEMPLATE_MAPPING.car,
+        requiredElements: ["car-body", "car-roof", "wheels", "windows"],
       },
+      // Add more vehicle levels...
+    ],
+  },
+  buildings: {
+    title: "Buildings",
+    description: "Color various buildings and structures",
+    levels: [
       {
-        id: 2,
-        image: "/images/animals/level2.jpg",
-        description: "Farm Animals",
+        id: 1,
+        templateType: "house",
+        description: "Simple house outline",
+        difficulty: "Easy",
+        minScore: 80,
+        expectedTime: 300,
+        image: TEMPLATE_MAPPING.house,
+        requiredElements: ["house-body", "roof", "door", "windows"],
       },
-      {
-        id: 3,
-        image: "/images/animals/level3.jpg",
-        description: "Wild Animals",
-      },
+      // Add more building levels...
     ],
   },
   nature: {
     title: "Nature",
+    description: "Color natural elements and scenes",
     levels: [
       {
         id: 1,
-        image: "/images/nature/level1.jpg",
-        description: "Simple Landscapes",
+        templateType: "flower",
+        description: "Simple flower outline",
+        difficulty: "Easy",
+        minScore: 80,
+        expectedTime: 300,
+        image: TEMPLATE_MAPPING.flower,
+        requiredElements: ["stem", "petals", "leaves", "center"],
       },
-      {
-        id: 2,
-        image: "/images/nature/level2.jpg",
-        description: "Trees and Plants",
-      },
-      {
-        id: 3,
-        image: "/images/nature/level3.jpg",
-        description: "Complex Scenes",
-      },
-    ],
-  },
-  patterns: {
-    title: "Patterns",
-    levels: [
-      {
-        id: 1,
-        image: "/images/patterns/level1.jpg",
-        description: "Basic Patterns",
-      },
-      {
-        id: 2,
-        image: "/images/patterns/level2.jpg",
-        description: "Geometric Shapes",
-      },
-      {
-        id: 3,
-        image: "/images/patterns/level3.jpg",
-        description: "Advanced Patterns",
-      },
+      // Add more nature levels...
     ],
   },
 };
