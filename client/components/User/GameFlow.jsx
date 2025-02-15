@@ -12,33 +12,33 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Mic, MicOff, Send } from "lucide-react";
-import { AI_SERVER_URL } from "@/constants/utils";
+import { AI_SERVER_URL } from "@/constants/utils"; // Make sure this path is correct or remove if not needed
 
 const sampleInputs = [
   {
-    title: "Conservative Investor",
-    text: "",
+    title: "Cognitive Development",
+    text: "Activities to enhance problem-solving, memory, and critical thinking.",
   },
   {
-    title: "Balanced Growth",
-    text: "I want to invest 10 lakhs based on the risk give me different assets classes",
+    title: "Motor Skills",
+    text: "Games and exercises to improve fine and gross motor skills.",
   },
   {
-    title: "Aggressive Growth",
-    text: "I'm seeking high returns and can take high risks. I want to invest ₹1 lakh for 7-10 years in growth-oriented instruments. Market volatility doesn't worry me.",
+    title: "Emotional Well-Being",
+    text: "Activities that promote mindfulness, emotional regulation, and self-awareness.",
   },
   {
-    title: "Example Prompt 1",
-    text: "I am a 30-year-old investor with a moderate risk tolerance. My primary goal is to achieve long-term financial stability while maximizing returns through a balanced investment strategy. I am comfortable with a mix of equities, bonds, and alternative assets. I prefer a diversified portfolio that includes technology stocks, real estate investments, and index funds. Additionally, I am open to sustainable and ESG-friendly investments. My ideal investment horizon is 10-15 years, and I would like to see a projected return of at least 8-12% annually. Please generate an optimal investment pathway based on these preferences, ensuring proper risk management and diversification",
+    title: "Social Interaction",
+    text: "Games and activities that encourage communication, cooperation, and empathy.",
   },
   {
-    title: "Example Prompt 2",
-    text: "As a financial firm seeking an optimized investment pathway, we require a comprehensive allocation strategy that maximizes returns while balancing risk across diverse asset classes. Our portfolio should be segmented into equities (large-cap, mid-cap, small-cap, emerging markets, and sector-specific stocks like technology, healthcare, energy, and consumer goods), fixed income (government bonds, corporate bonds, municipal bonds, and inflation-protected securities), alternative investments (real estate, commodities, hedge funds, and private equity), and sustainable investments (ESG-compliant funds, green bonds, and impact investing). We also require a detailed breakdown of liquidity management, risk-adjusted returns, and tax-efficient strategies for each segment. Please generate a highly detailed, data-driven investment roadmap, ensuring diversification, volatility control, and sector-wise allocation for both short-term (1-3 years), mid-term (3-7 years), and long-term (7+ years) horizons.",
+    title: "Balanced Approach",
+    text: "A mix of activities targeting all areas of development.",
   },
 ];
 
 const GameFlow = () => {
-  const [activeTab, setActiveTab] = useState("conservative");
+  const [activeTab, setActiveTab] = useState("cognitive");
   const [userInput, setUserInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -56,6 +56,7 @@ const GameFlow = () => {
   );
 
   const handleSpeechToText = () => {
+    // Speech to text functionality - not as relevant for this use case, but kept for consistency and potential future use
     if (!isListening) {
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -114,36 +115,28 @@ const GameFlow = () => {
       formData.append(
         "input",
         userInput ||
-          `I am an investor looking for financial guidance. My primary objective is to optimize my investment strategy based on my risk tolerance and financial goals.  
-            
-            - **Investment Horizon:** 3-5 years  
-            - **Investment Amount:** ₹1 lakh  
-            - **Risk Tolerance:** ${
-              activeTab === "conservative"
-                ? "Low"
-                : activeTab === "moderate"
-                  ? "Moderate"
-                  : "High"
-            }  
-            - **Financial Goal:** ${
-              activeTab === "conservative"
-                ? "Capital preservation and stable returns."
-                : activeTab === "moderate"
-                  ? "Balanced growth with manageable risk."
-                  : "High growth potential with an aggressive approach."
-            }  
-            
-            Please generate a structured financial plan that includes:  
-            1. Recommended investment categories (e.g., Bonds, Stocks, Mutual Funds, REITs, Crypto, etc.).  
-            2. Expected returns and risk factors for the selected strategy.  
-            3. Diversification strategy to minimize potential risks.  
-            4. Market trends or economic factors influencing this investment strategy.  
-            5. A step-by-step financial pathway that visually represents key decision points in the investment process.`
+          `I am looking for games and activities to enhance ${activeTab} development.  Please generate a structured game plan that includes:
+
+            1. Recommended games/activities.
+            2. A brief description of each activity and its benefits.
+            3. Steps to play or engage in the activity.
+            4. Expected outcomes/skills developed.
+            5. A step-by-step game flow that visually represents key decision points and game progression.`
       );
 
-      formData.append("risk", activeTab);
+      formData.append("focusArea", activeTab); // Changed 'risk' to 'focusArea' for clarity
+
+      // Check if AI_SERVER_URL is defined before making the request
+      if (!AI_SERVER_URL) {
+        console.error(
+          "AI_SERVER_URL is not defined. Please set it in your environment."
+        );
+        setIsGenerating(false);
+        return;
+      }
 
       const response = await fetch(`${AI_SERVER_URL}/ai-game-path`, {
+        // Ensure the API endpoint is correct
         method: "POST",
         body: formData,
       });
@@ -171,7 +164,7 @@ const GameFlow = () => {
               `,
             data: {
               ...node.data,
-              label: node.data.label.replace("â‚¹", "₹"),
+              label: node.data.label, // Removed currency replacement, not relevant here
             },
           }))
         );
@@ -227,73 +220,79 @@ const GameFlow = () => {
 
   const tabs = [
     {
-      id: "conservative",
-      label: "Conservative",
-      color: "purple",
+      id: "cognitive",
+      label: "Cognitive Development",
+      color: "blue",
       description:
-        "A low-risk investment approach designed to preserve capital while generating stable and predictable returns. This strategy focuses on wealth protection, making it suitable for those prioritizing financial security.",
-      returns: "6-8% p.a.",
-      suitability:
-        "Ideal for risk-averse investors, retirees, and individuals looking for steady income with minimal market exposure.",
-      suggestedAssets: [
-        "Government Bonds",
-        "High-Yield Savings Accounts",
-        "Fixed Deposits",
-        "Dividend-Paying purple-Chip Stocks",
-        "Money Market Funds",
+        "Focuses on activities that enhance thinking skills, problem-solving, memory, and attention.",
+      benefits: [
+        "Improved problem-solving abilities",
+        "Enhanced memory and recall",
+        "Better concentration and focus",
+        "Critical thinking skills",
       ],
-      aiPersonalizedAdvice: (age, riskTolerance, investmentHorizon) => {
-        if (age >= 50 || riskTolerance === "low" || investmentHorizon < 5) {
-          return "A conservative strategy is ideal for preserving wealth and generating consistent returns. This approach minimizes market exposure while ensuring financial stability.";
-        }
-        return "While this strategy provides security, consider a more balanced approach if you have a longer investment horizon and moderate risk tolerance.";
-      },
+      suggestedActivities: [
+        "Puzzles (jigsaw, crossword, Sudoku)",
+        "Brain-training apps (Lumosity, Elevate)",
+        "Strategy games (Chess, Checkers)",
+        "Memory games (matching pairs)",
+      ],
     },
     {
-      id: "moderate",
-      label: "Moderate",
-      color: "greenLime",
+      id: "motor",
+      label: "Motor Skills",
+      color: "orange",
       description:
-        "A well-balanced investment strategy that combines moderate risk with sustainable growth. It seeks to provide higher returns than conservative investments while limiting excessive volatility.",
-      returns: "10-13% p.a.",
-      suitability:
-        "Well-suited for mid-career professionals, individuals with a long-term perspective, and those seeking a mix of security and growth.",
-      suggestedAssets: [
-        "Index Funds",
-        "Balanced Mutual Funds",
-        "Corporate Bonds",
-        "Real Estate Investment Trusts (REITs)",
-        "Large-Cap Growth Stocks",
+        "Focuses on activities that improve both fine and gross motor skills.",
+      benefits: [
+        "Improved coordination and balance",
+        "Enhanced dexterity and fine motor control",
+        "Better physical fitness and health",
       ],
-      aiPersonalizedAdvice: (age, riskTolerance, investmentHorizon) => {
-        if (age >= 35 && riskTolerance === "medium" && investmentHorizon >= 5) {
-          return "A moderate strategy allows you to achieve growth while maintaining stability, making it an excellent choice for mid-career professionals and long-term wealth accumulation.";
-        }
-        return "If you have a longer investment horizon, you may consider increasing exposure to high-growth assets while maintaining diversification.";
-      },
+      suggestedActivities: [
+        "Drawing and painting",
+        "Building with blocks or Lego",
+        "Sports (basketball, soccer, swimming)",
+        "Dancing",
+      ],
     },
     {
-      id: "aggressive",
-      label: "Aggressive",
-      color: "red",
+      id: "emotional",
+      label: "Emotional Well-Being",
+      color: "teal",
       description:
-        "A high-risk, high-reward investment strategy designed for long-term capital appreciation. It focuses on maximizing returns, accepting short-term volatility in pursuit of substantial growth.",
-      returns: "15-25% p.a.",
-      suitability:
-        "Most appropriate for young investors, high-net-worth individuals, and those with a strong appetite for risk and a long-term investment horizon.",
-      suggestedAssets: [
-        "Technology Stocks",
-        "Cryptocurrency",
-        "Venture Capital Funds",
-        "Private Equity",
-        "Emerging Market ETFs",
+        "Focuses on activities that promote emotional regulation, mindfulness, and self-awareness.",
+      benefits: [
+        "Reduced stress and anxiety",
+        "Improved emotional regulation",
+        "Increased self-awareness",
+        "Better overall mental health",
       ],
-      aiPersonalizedAdvice: (age, riskTolerance, investmentHorizon) => {
-        if (age < 35 && riskTolerance === "high" && investmentHorizon >= 10) {
-          return "With time on your side, an aggressive strategy can help you achieve substantial wealth accumulation. Ensure you stay diversified to manage risks.";
-        }
-        return "While this strategy offers high growth potential, it's crucial to reassess your risk tolerance and diversify to mitigate downturns.";
-      },
+      suggestedActivities: [
+        "Mindfulness meditation",
+        "Journaling",
+        "Yoga and Tai Chi",
+        "Creative expression (art, music)",
+      ],
+    },
+    {
+      id: "social",
+      label: "Social Interaction",
+      color: "pink",
+      description:
+        "Focuses on activities that encourage communication, cooperation, and empathy.",
+      benefits: [
+        "Improved communication skills",
+        "Enhanced cooperation and teamwork",
+        "Increased empathy and understanding",
+        "Stronger social connections",
+      ],
+      suggestedActivities: [
+        "Board games (Monopoly, Codenames)",
+        "Team sports",
+        "Group projects and activities",
+        "Volunteering",
+      ],
     },
   ];
 
@@ -330,13 +329,13 @@ const GameFlow = () => {
               ref={textareaRef}
               value={userInput}
               onChange={handleTextareaInput}
-              placeholder="Describe your investment goals, risk tolerance, and preferences..."
+              placeholder="Describe your goals for this game session, preferred activities, and any specific needs..."
               className="w-full min-h-[120px] p-5 text-gray-800 placeholder-gray-400 bg-gray-50 border border-gray-200 rounded-xl resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
               style={{ height: "auto" }}
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -348,9 +347,6 @@ const GameFlow = () => {
                 }`}
               >
                 <div className="font-semibold">{tab.label}</div>
-                <div className="text-sm mt-1 opacity-75">
-                  Returns: {tab.returns}
-                </div>
               </button>
             ))}
           </div>
@@ -358,26 +354,32 @@ const GameFlow = () => {
           {activeTab && (
             <div className="p-6 bg-white rounded-2xl shadow-xl border border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-2">
-                {tabs.find((tab) => tab.id === activeTab)?.label} Strategy
+                {tabs.find((tab) => tab.id === activeTab)?.label} Focus
               </h2>
               <p className="text-gray-600">
                 {tabs.find((tab) => tab.id === activeTab)?.description}
               </p>
               <div className="mt-4">
-                <p className="font-medium text-gray-800">Suggested Assets:</p>
+                <p className="font-medium text-gray-800">
+                  Suggested Activities:
+                </p>
                 <ul className="list-disc pl-5 text-gray-600">
                   {tabs
                     .find((tab) => tab.id === activeTab)
-                    ?.suggestedAssets.map((asset, index) => (
+                    ?.suggestedActivities.map((asset, index) => (
                       <li key={index}>{asset}</li>
                     ))}
                 </ul>
               </div>
               <div className="mt-4">
-                <p className="font-medium text-gray-800">Suitability:</p>
-                <p className="text-gray-600">
-                  {tabs.find((tab) => tab.id === activeTab)?.suitability}
-                </p>
+                <p className="font-medium text-gray-800">Benefits:</p>
+                <ul className="list-disc pl-5 text-gray-600">
+                  {tabs
+                    .find((tab) => tab.id === activeTab)
+                    ?.benefits.map((benefit, index) => (
+                      <li key={index}>{benefit}</li>
+                    ))}
+                </ul>
               </div>
             </div>
           )}
@@ -395,9 +397,7 @@ const GameFlow = () => {
           >
             <Send className="h-6 w-6" />
             <span>
-              {isGenerating
-                ? "Analyzing Your Preferences..."
-                : "Generate Investment Pathway"}
+              {isGenerating ? "Generating Game Flow..." : "Generate Game Flow"}
             </span>
           </button>
         </div>
@@ -407,11 +407,11 @@ const GameFlow = () => {
         <div className="bg-white rounded-2xl shadow-xl p-10 text-center max-w-2xl mx-auto">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-600 border-t-transparent mx-auto"></div>
           <h3 className="mt-6 text-xl font-semibold text-gray-900">
-            Creating Your Personalized Investment Pathway
+            Creating Your Personalized Game Flow
           </h3>
           <p className="mt-3 text-gray-600">
-            Analyzing your preferences and generating the optimal investment
-            strategy...
+            Analyzing your preferences and generating the optimal game
+            session...
           </p>
         </div>
       )}

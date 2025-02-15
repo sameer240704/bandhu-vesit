@@ -38,16 +38,15 @@ export async function updateUser(userId, updateData) {
 
 export async function getUserDetails(userId) {
   try {
-    console.log(userId)
     await connect();
 
-    const user = await User.findById(userId);
+    const newUser = await User.findById(userId);
 
-    if (!user) {
+    if (!newUser) {
       throw new Error("User not found");
     }
 
-    return JSON.parse(JSON.stringify(user));
+    return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     console.error("Error updating user:", error);
     throw error;

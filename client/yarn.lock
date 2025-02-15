@@ -161,6 +161,11 @@
     "@eslint/core" "^0.10.0"
     levn "^0.4.1"
 
+"@excalidraw/excalidraw@^0.17.6":
+  version "0.17.6"
+  resolved "https://registry.yarnpkg.com/@excalidraw/excalidraw/-/excalidraw-0.17.6.tgz#5fd208ce69d33ca712d1804b50d7d06d5c46ac4d"
+  integrity sha512-fyCl+zG/Z5yhHDh5Fq2ZGmphcrALmuOdtITm8gN4d8w4ntnaopTXcTfnAAaU3VleDC6LhTkoLOTG6P5kgREiIg==
+
 "@floating-ui/core@^1.6.0":
   version "1.6.9"
   resolved "https://registry.npmjs.org/@floating-ui/core/-/core-1.6.9.tgz"
@@ -343,7 +348,7 @@
 
 "@mediapipe/hands@^0.4.1675469240":
   version "0.4.1675469240"
-  resolved "https://registry.npmjs.org/@mediapipe/hands/-/hands-0.4.1675469240.tgz"
+  resolved "https://registry.yarnpkg.com/@mediapipe/hands/-/hands-0.4.1675469240.tgz#f032b2f5deff5a69430693f94be45dd9854e803f"
   integrity sha512-GxoZvL1mmhJxFxjuyj7vnC++JIuInGznHBin5c7ZSq/RbcnGyfEcJrkM/bMu5K1Mz/2Ko+vEX6/+wewmEHPrHg==
 
 "@mediapipe/pose@^0.5.1675469404":
@@ -464,6 +469,11 @@
   version "1.8.0"
   resolved "https://registry.npmjs.org/@preact/signals-core/-/signals-core-1.8.0.tgz"
   integrity sha512-OBvUsRZqNmjzCZXWLxkZfhcgT+Fk8DDcT/8vD6a1xhDemodyy87UJRJfASMuSD8FaAIeGgGm85ydXhm7lr4fyA==
+
+"@radix-ui/number@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/number/-/number-1.1.0.tgz#1e95610461a09cdf8bb05c152e76ca1278d5da46"
+  integrity sha512-V3gRzhVNU1ldS5XhAPTom1fOIo4ccrjjJgmE+LI2h/WaFpHmx0MQApT+KZHnx8abG6Avtfcz4WoEciMnpFT3HQ==
 
 "@radix-ui/primitive@1.1.1":
   version "1.1.1"
@@ -645,7 +655,26 @@
     "@radix-ui/react-use-callback-ref" "1.1.0"
     "@radix-ui/react-use-controllable-state" "1.1.0"
 
+<<<<<<< HEAD
 "@radix-ui/react-slot@^1.1.2", "@radix-ui/react-slot@1.1.2":
+=======
+"@radix-ui/react-scroll-area@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-scroll-area/-/react-scroll-area-1.2.3.tgz#6a9a7897add739ce84b517796ee345d495893d3f"
+  integrity sha512-l7+NNBfBYYJa9tNqVcP2AGvxdE3lmE6kFTBXdvHgUaZuy+4wGCL1Cl2AfaR7RKyimj7lZURGLwFO59k4eBnDJQ==
+  dependencies:
+    "@radix-ui/number" "1.1.0"
+    "@radix-ui/primitive" "1.1.1"
+    "@radix-ui/react-compose-refs" "1.1.1"
+    "@radix-ui/react-context" "1.1.1"
+    "@radix-ui/react-direction" "1.1.0"
+    "@radix-ui/react-presence" "1.1.2"
+    "@radix-ui/react-primitive" "2.0.2"
+    "@radix-ui/react-use-callback-ref" "1.1.0"
+    "@radix-ui/react-use-layout-effect" "1.1.0"
+
+"@radix-ui/react-slot@1.1.2", "@radix-ui/react-slot@^1.1.2":
+>>>>>>> dcd67856c04d5c16a9e92c280da2745ba9e09f84
   version "1.1.2"
   resolved "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.1.2.tgz"
   integrity sha512-YAKxaiGsSQJ38VzKH86/BPRC4rh+b1Jpa+JneA5LRE7skmLPNAyeG8kPJj/oo4STLvlrs8vkf/iYyc3A5stYCQ==
@@ -668,6 +697,24 @@
     "@radix-ui/react-use-callback-ref" "1.1.0"
     "@radix-ui/react-use-controllable-state" "1.1.0"
     "@radix-ui/react-use-layout-effect" "1.1.0"
+    "@radix-ui/react-visually-hidden" "1.1.2"
+
+"@radix-ui/react-tooltip@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-tooltip/-/react-tooltip-1.1.8.tgz#1aa2a575630fca2b2845b62f85056bb826bec456"
+  integrity sha512-YAA2cu48EkJZdAMHC0dqo9kialOcRStbtiY4nJPaht7Ptrhcvpo+eDChaM6BIs8kL6a8Z5l5poiqLnXcNduOkA==
+  dependencies:
+    "@radix-ui/primitive" "1.1.1"
+    "@radix-ui/react-compose-refs" "1.1.1"
+    "@radix-ui/react-context" "1.1.1"
+    "@radix-ui/react-dismissable-layer" "1.1.5"
+    "@radix-ui/react-id" "1.1.0"
+    "@radix-ui/react-popper" "1.2.2"
+    "@radix-ui/react-portal" "1.1.4"
+    "@radix-ui/react-presence" "1.1.2"
+    "@radix-ui/react-primitive" "2.0.2"
+    "@radix-ui/react-slot" "1.1.2"
+    "@radix-ui/react-use-controllable-state" "1.1.0"
     "@radix-ui/react-visually-hidden" "1.1.2"
 
 "@radix-ui/react-use-callback-ref@1.1.0":
@@ -2152,6 +2199,13 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
+emoji-picker-react@^4.12.0:
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/emoji-picker-react/-/emoji-picker-react-4.12.0.tgz#4cc310ad4b8a39844a2d5edcc92967683d6b5138"
+  integrity sha512-q2c8UcZH0eRIMj41bj0k1akTjk69tsu+E7EzkW7giN66iltF6H9LQvQvw6ugscsxdC+1lmt3WZpQkkY65J95tg==
+  dependencies:
+    flairup "1.0.0"
+
 emoji-regex@^10.3.0:
   version "10.4.0"
   resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-10.4.0.tgz"
@@ -2655,6 +2709,11 @@ find-up@^5.0.0:
   dependencies:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
+
+flairup@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/flairup/-/flairup-1.0.0.tgz#d3af0052ad02734c12d2446608a869498adb351b"
+  integrity sha512-IKlE+pNvL2R+kVL1kEhUYqRxVqeFnjiIvHWDMLFXNaqyUdFXQM2wte44EfMYJNHkW16X991t2Zg8apKkhv7OBA==
 
 flat-cache@^4.0.0:
   version "4.0.1"

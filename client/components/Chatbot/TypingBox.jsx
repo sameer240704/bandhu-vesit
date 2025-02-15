@@ -5,12 +5,14 @@ import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { Logo } from "@/public/images";
 import { CHATBOT_ROUTE } from "@/constants/utils";
+import { useChatbot } from "@/context/ChatbotContext";
 
 export const TypingBox = ({
   setMessage,
   loading,
   setLoading,
   setAnimationNumber,
+  currentBot,
 }) => {
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -74,6 +76,7 @@ export const TypingBox = ({
 
       const formData = new FormData();
       formData.append("input", question.trim());
+      formData.append("type", currentBot);
 
       const response = await fetch(CHATBOT_ROUTE, {
         method: "POST",

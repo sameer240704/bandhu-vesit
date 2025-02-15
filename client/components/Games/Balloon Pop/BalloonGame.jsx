@@ -6,9 +6,7 @@ import GameCanvas from "./GameCanvas";
 import StartMenu from "./StartMenu";
 import GameOverDialog from "./GameOverDialog";
 import ScoreDisplay from "./ScoreDisplay";
-import { useMediaPipe } from "./hooks/useMediaPipe";
-import Script from 'next/script';
-import { Balloon } from "./Balloon";
+import Script from "next/script";
 import { drawScene } from "./utils/drawScene";
 import GameOverlay from "./GameOverlay";
 
@@ -31,39 +29,41 @@ const BalloonGame = () => {
         video: {
           width: 1280,
           height: 720,
-          facingMode: 'user'
-        }
+          facingMode: "user",
+        },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
         setGameState("camera-setup");
       }
     } catch (err) {
-      setError("Failed to start camera. Please ensure camera permissions are granted.");
+      setError(
+        "Failed to start camera. Please ensure camera permissions are granted."
+      );
     }
   };
 
   const handleStartTracking = async () => {
     try {
       setError(null);
-      
+
       if (!window.Hands) {
-        throw new Error('MediaPipe Hands not loaded');
+        throw new Error("MediaPipe Hands not loaded");
       }
 
       const handsInstance = new window.Hands({
         locateFile: (file) => {
           return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-        }
+        },
       });
 
       await handsInstance.setOptions({
         maxNumHands: 2,
         modelComplexity: 0,
         minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
+        minTrackingConfidence: 0.5,
       });
 
       handsInstance.onResults((results) => {
@@ -71,7 +71,7 @@ const BalloonGame = () => {
           const ctx = canvasRef.current.getContext("2d");
           if (ctx) {
             drawScene(ctx, videoRef.current, results, balloons);
-            
+
             // Store hand landmarks data
             setHandLandmarksData(results.multiHandLandmarks);
           }
@@ -85,14 +85,13 @@ const BalloonGame = () => {
           }
         },
         width: 1280,
-        height: 720
+        height: 720,
       });
 
       setHands(handsInstance);
       setCamera(cameraInstance);
       await cameraInstance.start();
       setGameState("tracking-setup");
-      
     } catch (err) {
       console.error("Hand tracking error:", err);
       setError("Failed to initialize hand tracking. Please try again.");
@@ -110,7 +109,7 @@ const BalloonGame = () => {
       setHighScore(score);
     }
     setGameState("gameOver");
-    
+
     // Clean up MediaPipe
     if (camera) {
       camera.stop();
@@ -130,26 +129,26 @@ const BalloonGame = () => {
         hands.close();
       }
       if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
   }, [camera, hands]);
 
   return (
     <>
-      <Script 
+      <Script
         src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
         strategy="beforeInteractive"
       />
-      <Script 
+      <Script
         src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
         strategy="beforeInteractive"
       />
-      <Script 
+      <Script
         src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
         strategy="beforeInteractive"
       />
-      
+
       <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-purple-100 z-0 overflow-hidden">
         {error && (
           <div className="absolute top-4 left-4 right-4 z-[60] bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -176,7 +175,7 @@ const BalloonGame = () => {
           />
         </div>
 
-        <div className="relative z-50">
+        <div className="relative w-full h-full flex justify-center items-center` z-50">
           {gameState === "menu" && (
             <StartMenu onStart={handleStartCamera} highScore={highScore} />
           )}
@@ -188,7 +187,9 @@ const BalloonGame = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="bg-white p-8 rounded-2xl shadow-xl text-center space-y-6"
               >
-                <h2 className="text-2xl font-bold text-purple-600">Camera Ready!</h2>
+                <h2 className="text-2xl font-bold text-purple-600">
+                  Camera Ready!
+                </h2>
                 <p className="text-gray-600">
                   Camera initialized. Ready to set up hand tracking?
                 </p>
