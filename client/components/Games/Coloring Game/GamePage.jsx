@@ -7,17 +7,18 @@ import {
   Save,
   Eraser,
   ArrowLeft,
-  Image as ImageIcon, // Import Image Icon
+  Image as ImageIcon,
 } from "lucide-react";
 import Iridescence from "@/components/ui/iridescence";
 import { TEMPLATE_MAPPING } from "@/constants/ColoringGame/levelData";
+import { useUser } from "@clerk/nextjs";
 
 const GamePage = ({
   level,
   category,
   onBackToLevels,
   onLevelComplete,
-  onShowGallery, // Add onShowGallery prop
+  onShowGallery,
 }) => {
   if (!level) {
     return (
@@ -26,6 +27,9 @@ const GamePage = ({
       </div>
     );
   }
+
+  const { user } = useUser();
+  const userId = user?.id; // Access user id from Clerk
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedElements, setSelectedElements] = useState({});
@@ -69,46 +73,55 @@ const GamePage = ({
     return (coloredElements / totalRequired) * 100;
   };
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const progress = calculateProgress();
+  const handleSubmitToDatabase = async () => {
+    if (!userId) {
+      setError("You must be logged in to save to the database.");
+      return;
+    }
 
-      const submissionData = {
-        levelId: level.id,
-        category,
-        selectedElements,
-        progress,
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Extract color data from selectedElements
+      const colorsUsed = Object.entries(selectedElements).map(
+        ([elementId, hex_code]) => {
+          return {
+            name: elementId, // You might want to have a mapping for elementId to color name
+            hex_code: hex_code,
+          };
+        }
+      );
+
+      //Prepare data to be sent
+      const coloringData = {
+        userId: userId,
+        completed_levels: level.id,
+        image: level.id,
+        colors_used: colorsUsed,
       };
 
-      const response = await fetch("/api/submit-coloring", {
+      const response = await fetch("/api/coloring", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submissionData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(coloringData),
       });
 
-      if (!response.ok) throw new Error("Failed to submit coloring");
-
-      const data = await response.json();
-      setScore(data.score);
-
-      if (data.score >= level.minScore) {
-        onLevelComplete(level.id);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save to database: ${response.status} - ${response.statusText}`
+        );
       }
+
+      // Handle successful save
+      console.log("Successfully saved to database!");
     } catch (err) {
-      setError("Failed to submit. Please try again.");
+      setError(`Failed to save to database: ${err.message}`);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRemoveColor = (elementId) => {
-    setSelectedElements((prev) => {
-      const newState = { ...prev };
-      delete newState[elementId];
-      return newState;
-    });
   };
 
   const handleDownload = () => {
@@ -142,7 +155,6 @@ const GamePage = ({
   const handleSave = () => {
     if (!templateRef.current) return;
 
-    // Clone the SVG node and apply colors
     const svg = templateRef.current.cloneNode(true);
     for (const elementId in selectedElements) {
       const color = selectedElements[elementId];
@@ -152,16 +164,13 @@ const GamePage = ({
       }
     }
 
-    // Serialize the SVG to a string
     const svgString = new XMLSerializer().serializeToString(svg);
-
-    // Convert SVG to data URL
     const svgDataUrl = `data:image/svg+xml;base64,${btoa(svgString)}`;
 
     try {
       const saveData = {
         selectedElements: selectedElements,
-        imageDataUrl: svgDataUrl, // Save the data URL
+        imageDataUrl: svgDataUrl,
       };
       localStorage.setItem(
         `coloringGame-${level.id}-${category}`,
@@ -172,6 +181,8 @@ const GamePage = ({
     } catch (error) {
       console.error("Error saving game:", error);
       setSaved(false);
+    } finally {
+      setSaved(true);
     }
   };
 
@@ -191,22 +202,19 @@ const GamePage = ({
     }
   }, [level, category]);
 
-  // Function to apply colors to SVG elements. This now uses a ref to the template.
   useEffect(() => {
     if (templateRef.current) {
       const svg = templateRef.current;
       for (const elementId in selectedElements) {
         const color = selectedElements[elementId];
-        const element = svg.querySelector(`#${elementId}`); // Find the element by ID
+        const element = svg.querySelector(`#${elementId}`);
 
         if (element) {
-          element.setAttribute("fill", color); // Set the fill color
-          // Optional:  Set stroke color as well, if needed.
-          // element.setAttribute("stroke", color);
+          element.setAttribute("fill", color);
         }
       }
     }
-  }, [selectedElements]); // Re-run when selectedElements change
+  }, [selectedElements]);
 
   return (
     <motion.div
@@ -284,7 +292,7 @@ const GamePage = ({
           <div className="flex items-center gap-4">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                onClick={handleSubmit}
+                onClick={handleSubmitToDatabase}
                 disabled={loading}
                 className="bg-purple-500 hover:bg-purple-600 text-white"
               >
@@ -322,15 +330,22 @@ const GamePage = ({
             {/* Gallery Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                onClick={onShowGallery} // Call the onShowGallery prop
+                onClick={onShowGallery}
                 className="bg-orange-500 hover:bg-orange-600 text-white"
               >
                 <ImageIcon className="mr-2" />
                 Gallery
               </Button>
             </motion.div>
+
+            {/* Submit to Database Button */}
           </div>
 
+          {saved && (
+            <Alert className="mt-4" variant="success">
+              <AlertDescription>Successfully saved!</AlertDescription>
+            </Alert>
+          )}
           {error && (
             <Alert variant="destructive" className="mt-4">
               <AlertDescription>{error}</AlertDescription>
