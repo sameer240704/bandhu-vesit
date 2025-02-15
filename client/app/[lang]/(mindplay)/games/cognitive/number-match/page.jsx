@@ -5,7 +5,6 @@ import LevelsPage from "@/components/Games/Memory Game/LevelsPage";
 import GamePage from "@/components/Games/Memory Game/GamePage";
 import SettingsPage from "@/components/Games/Memory Game/SettingsPage";
 import GameOverDialog from "@/components/Games/Memory Game/GameOverDialog";
-
 import { getLevelConfig } from "@/constants/MemoryGame/gameConfig";
 
 const PAGES = {
@@ -13,6 +12,24 @@ const PAGES = {
   LEVELS: "levels",
   GAME: "game",
   SETTINGS: "settings",
+};
+
+const STORAGE_KEYS = {
+  UNLOCKED_LEVELS: "memoryGame_unlockedLevels",
+  LEVEL_PERFORMANCE: "memoryGame_levelPerformance",
+  SETTINGS: "memoryGame_settings",
+};
+
+const getStoredData = (key, defaultValue) => {
+  if (typeof window === "undefined") return defaultValue;
+  const stored = localStorage.getItem(key);
+  return stored ? JSON.parse(stored) : defaultValue;
+};
+
+const setStoredData = (key, value) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
 };
 
 export const useNavigationStack = () => {
@@ -33,8 +50,41 @@ export const useNavigationStack = () => {
   return { stack, push, pop, current: stack[stack.length - 1] };
 };
 
+const calculateDynamicAttempts = (currentLevel, previousPerformance) => {
+  if (currentLevel === 1) return getLevelConfig(1).attempts;
+  const lastPerformance = previousPerformance[currentLevel - 2];
+  if (!lastPerformance) return getLevelConfig(currentLevel).attempts;
+
+  const baseAttempts = getLevelConfig(currentLevel).attempts;
+  const attemptRatio =
+    lastPerformance.attemptsUsed / lastPerformance.baseAttempts;
+  const timePerMove = lastPerformance.timeTaken / lastPerformance.attemptsUsed;
+  const accuracyScore = lastPerformance.accuracy;
+
+  const performanceScore =
+    attemptRatio * 0.4 + timePerMove * 0.3 + (1 - accuracyScore) * 0.3;
+
+  let adjustmentFactor = 1;
+  if (performanceScore < 0.5) {
+    adjustmentFactor = 0.85;
+  } else if (performanceScore < 0.7) {
+    adjustmentFactor = 0.92;
+  } else if (performanceScore > 0.9) {
+    adjustmentFactor = 1.15;
+  } else if (performanceScore > 1.1) {
+    adjustmentFactor = 1.25;
+  }
+
+  const adjustedAttempts = Math.round(baseAttempts * adjustmentFactor);
+  const minAttempts = Math.ceil(baseAttempts * 0.75);
+  const maxAttempts = Math.ceil(baseAttempts * 1.5);
+
+  return Math.min(Math.max(adjustedAttempts, minAttempts), maxAttempts);
+};
+
 const MemoryMastery = () => {
   const navigation = useNavigationStack();
+  const [levelPerformance, setLevelPerformance] = useState([]);
   const [gameState, setGameState] = useState({
     level: 1,
     cards: [],
@@ -46,6 +96,7 @@ const MemoryMastery = () => {
     gameWon: false,
     showCelebration: false,
     startTime: 0,
+    baseAttempts: 10,
   });
   const [unlockedLevels, setUnlockedLevels] = useState(1);
   const [settings, setSettings] = useState({
@@ -53,6 +104,38 @@ const MemoryMastery = () => {
     musicEnabled: true,
   });
   const [showDialog, setShowDialog] = useState(false);
+
+  // Load saved data on initial mount
+  useEffect(() => {
+    const storedUnlockedLevels = getStoredData(STORAGE_KEYS.UNLOCKED_LEVELS, 1);
+    const storedLevelPerformance = getStoredData(
+      STORAGE_KEYS.LEVEL_PERFORMANCE,
+      []
+    );
+    const storedSettings = getStoredData(STORAGE_KEYS.SETTINGS, {
+      soundEnabled: true,
+      musicEnabled: true,
+    });
+
+    setUnlockedLevels(storedUnlockedLevels);
+    setLevelPerformance(storedLevelPerformance);
+    setSettings(storedSettings);
+  }, []);
+
+  // Save settings whenever they change
+  useEffect(() => {
+    setStoredData(STORAGE_KEYS.SETTINGS, settings);
+  }, [settings]);
+
+  // Save unlocked levels whenever they change
+  useEffect(() => {
+    setStoredData(STORAGE_KEYS.UNLOCKED_LEVELS, unlockedLevels);
+  }, [unlockedLevels]);
+
+  // Save level performance whenever it changes
+  useEffect(() => {
+    setStoredData(STORAGE_KEYS.LEVEL_PERFORMANCE, levelPerformance);
+  }, [levelPerformance]);
 
   useEffect(() => {
     setGameState((prev) => ({
@@ -63,6 +146,7 @@ const MemoryMastery = () => {
 
   const initializeCards = (level) => {
     const config = getLevelConfig(level);
+    const dynamicAttempts = calculateDynamicAttempts(level, levelPerformance);
 
     const values = Array.from({ length: config.pairs }, (_, i) => i + 1);
     const pairs = [...values, ...values];
@@ -76,7 +160,8 @@ const MemoryMastery = () => {
         isFlipped: false,
         isMatched: false,
       })),
-      maxAttempts: config.attempts,
+      maxAttempts: dynamicAttempts,
+      baseAttempts: config.attempts,
       attempts: 0,
       matchedPairs: 0,
       flippedCards: [],
@@ -91,6 +176,33 @@ const MemoryMastery = () => {
         startTime: Date.now(),
       }));
     }, 0);
+  };
+
+  const saveLevelPerformance = () => {
+    const timeTaken = Date.now() - gameState.startTime;
+    const accuracy = gameState.matchedPairs / (gameState.attempts || 1);
+
+    const performance = {
+      attemptsUsed: gameState.attempts,
+      baseAttempts: gameState.baseAttempts,
+      timeTaken,
+      accuracy,
+    };
+
+    setLevelPerformance((prev) => {
+      const newPerformance = [...prev];
+      newPerformance[gameState.level - 1] = performance;
+      setStoredData(STORAGE_KEYS.LEVEL_PERFORMANCE, newPerformance);
+      return newPerformance;
+    });
+  };
+
+  const handleUnlockLevel = (level) => {
+    setUnlockedLevels((prev) => {
+      const newValue = Math.max(prev, level);
+      setStoredData(STORAGE_KEYS.UNLOCKED_LEVELS, newValue);
+      return newValue;
+    });
   };
 
   const handleCardClick = (id) => {
@@ -141,22 +253,26 @@ const MemoryMastery = () => {
           }));
 
           if (isLevelComplete) {
-            setUnlockedLevels((prev) => Math.max(prev, gameState.level + 1));
+            saveLevelPerformance();
+            handleUnlockLevel(gameState.level + 1);
             setShowDialog(true);
           }
         } else {
           newCards[gameState.flippedCards[0]].isFlipped = false;
           newCards[id].isFlipped = false;
 
+          const isGameOver = newAttempts >= gameState.maxAttempts;
+
           setGameState((prev) => ({
             ...prev,
             cards: newCards,
             flippedCards: [],
             attempts: newAttempts,
-            gameOver: newAttempts >= gameState.maxAttempts,
+            gameOver: isGameOver,
           }));
 
-          if (newAttempts >= gameState.maxAttempts) {
+          if (isGameOver) {
+            saveLevelPerformance();
             setShowDialog(true);
           }
         }
@@ -183,6 +299,11 @@ const MemoryMastery = () => {
         level: 1,
       }));
     }
+  };
+
+  const handleUpdateSettings = (newSettings) => {
+    setSettings(newSettings);
+    setStoredData(STORAGE_KEYS.SETTINGS, newSettings);
   };
 
   useEffect(() => {
@@ -218,7 +339,7 @@ const MemoryMastery = () => {
             onNavigate={handleNavigate}
             onBack={handleBack}
             settings={settings}
-            onUpdateSettings={setSettings}
+            onUpdateSettings={handleUpdateSettings}
           />
         );
       default:
