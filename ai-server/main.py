@@ -6,6 +6,7 @@ from typing import Optional
 from dotenv import load_dotenv
 
 from services.gemini_game_flow import get_gemini_response
+from services.wellness import process_input
 
 load_dotenv()
 
@@ -32,5 +33,7 @@ async def ai_financial_path(
         raise HTTPException(status_code=500, detail=f"Something went wrong: {str(e)}")
     
 @app.post("/ai-chatbot")
-async def ai_chatbot():
-    print("Hello")
+async def ai_chatbot(input: str = Form(...)):
+    response = process_input(input)
+
+    return response

@@ -77,7 +77,7 @@ const ChatComponent = () => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col h-[850px] w-1/3 bg-white border-2 border-purple-100 rounded-xl shadow-xl overflow-hidden"
+      className="flex flex-col h-full w-1/3 bg-white border-2 border-purple-100 rounded-xl shadow-xl overflow-hidden"
     >
       <div className="px-4 py-3 flex justify-between items-center font-bold text-lg text-center border-b border-purple-100">
         <Image src={Logo} alt="Logo" className="h-8 w-auto" />

@@ -209,13 +209,13 @@ const NewsPage = () => {
                   <img
                     src={
                       article.image ||
-                      "https://via.placeholder.com/640x480?text=No+Image"
+                      "https://clunyfarm.co.za/news/what-is-mental-disability/@@download/image/Oct22_18_862457080.png"
                     }
                     alt={article.title}
                     className="object-cover w-full h-48"
                     onError={(e) => {
                       e.target.src =
-                        "https://via.placeholder.com/640x480?text=No+Image";
+                        "https://clunyfarm.co.za/news/what-is-mental-disability/@@download/image/Oct22_18_862457080.png";
                     }}
                   />
                 </div>

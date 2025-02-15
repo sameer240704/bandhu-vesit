@@ -8,16 +8,19 @@ import Nodulus from "./nodulus.png";
 import BalloonPop from "./balloonpop.png";
 import HoleInTheWall from "./holeinthewall.jpg";
 import WhiteBoard from "./whiteboard.png";
+import AvatarBuilder from "./avatar-builder.jpeg";
+
 
 export {
-  FlappyBird,
-  Logo,
-  MusicMania,
-  Thinking,
-  colorGame,
-  numberMatch,
-  Nodulus,
-  BalloonPop,
-  HoleInTheWall,
-  WhiteBoard,
+    FlappyBird,
+    Logo,
+    MusicMania,
+    Thinking,
+    colorGame,
+    numberMatch,
+    Nodulus,
+    BalloonPop,
+    HoleInTheWall,
+    WhiteBoard,
+    AvatarBuilder
 };

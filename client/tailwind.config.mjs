@@ -11,6 +11,7 @@ export default {
       backgroundImage: {
         chatbotBg: "url('/images/background.png')",
         chatBg: "url('/images/chatBg.png')",
+        avatarBuilerBg: "url('/images/avatar-builder.jpeg')"
       },
       colors: {
         purple: {

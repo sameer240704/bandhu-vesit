@@ -22,7 +22,8 @@
     "number-match": "Number Match",
     "flappy-bird": "Flappy Bird",
     "nodulus": "Nodulus",
-    "go_back": "Exit Game"
+    "go_back": "Exit Game",
+    "avatar-builder": "Avatar Builder"
   },
   "voice": {
     "start_listening": "Start listening",
@@ -84,5 +85,11 @@
     "online": "Online",
     "visits": "Visits",
     "play": "Play Game"
+  },
+  "universe": {
+    "avatar": "Avatar Builder",
+    "avatar_desc": "Create and customize your unique digital identity in the Mindplay Universe",
+    "start": "Start Building",
+    "learn_more": "Learn More"
   }
 }

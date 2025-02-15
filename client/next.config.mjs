@@ -10,6 +10,10 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "res.cloudinary.com",
             },
+            {
+                protocol: "https",
+                hostname: "clunyfarm.co.za"
+            }
         ],
     },
     async redirects() {

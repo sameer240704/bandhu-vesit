@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { Logo } from "@/public/images";
+import { CHATBOT_ROUTE } from "@/constants/utils";
 
 export const TypingBox = ({
   setMessage,
@@ -72,9 +73,9 @@ export const TypingBox = ({
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("message", question.trim());
+      formData.append("input", question.trim());
 
-      const response = await fetch("VANI_AI_ROUTE", {
+      const response = await fetch(CHATBOT_ROUTE, {
         method: "POST",
         body: formData,
       });
@@ -82,27 +83,9 @@ export const TypingBox = ({
       if (response.ok) {
         const result = await response.json();
 
-        const audioBlob = new Blob(
-          [Uint8Array.from(atob(result.audio_file), (c) => c.charCodeAt(0))],
-          { type: "audio/mpeg" }
-        );
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        const assistantReply = result.assistant_reply;
+        const assistantReply = result;
 
         setMessage(assistantReply);
-
-        const audio = new Audio(audioUrl);
-        audio.play();
-
-        audio.addEventListener("play", () => {
-          document.dispatchEvent(new CustomEvent("startDoctorAnimation"));
-        });
-
-        audio.addEventListener("ended", () => {
-          document.dispatchEvent(new CustomEvent("stopDoctorAnimation"));
-          URL.revokeObjectURL(audioUrl);
-        });
 
         setQuestion("");
       } else {
