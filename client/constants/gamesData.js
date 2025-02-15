@@ -4,6 +4,8 @@ import {
   MusicMania,
   Nodulus,
   numberMatch,
+  BalloonPop,
+  HoleInTheWall,
 } from "@/public/images";
 
 export const motorGames = [
@@ -18,16 +20,6 @@ export const motorGames = [
     gameLink: "/music-mania",
   },
   {
-    title: "Flappy Bird",
-    publisher: "MindPlay",
-    rating: "4.1",
-    players: "644",
-    views: "1232",
-    imageUrl: FlappyBird,
-    isHot: false,
-    gameLink: "/flappy-bird",
-  },
-  {
     title: "Nodulus",
     publisher: "MindPlay",
     rating: "4.8",
@@ -36,6 +28,36 @@ export const motorGames = [
     imageUrl: Nodulus,
     isHot: false,
     gameLink: "/nodulus",
+  },
+  {
+    title: "Balloon Pop",
+    publisher: "MindPlay",
+    rating: "4.9",
+    players: "1356",
+    views: "6578",
+    imageUrl: BalloonPop,
+    isHot: true,
+    gameLink: "/balloon-pop",
+  },
+  {
+    title: "Hole in the Wall",
+    publisher: "MindPlay",
+    rating: "4.5",
+    players: "2976",
+    views: "4568",
+    imageUrl: HoleInTheWall,
+    isHot: true,
+    gameLink: "/hole-in-the-wall",
+  },
+  {
+    title: "Flappy Bird",
+    publisher: "MindPlay",
+    rating: "4.1",
+    players: "644",
+    views: "1232",
+    imageUrl: FlappyBird,
+    isHot: false,
+    gameLink: "/flappy-bird",
   },
 ];
 
@@ -77,3 +99,18 @@ export const socialGames = [
     gameLink: "/scenario-saga",
   },
 ];
+
+export const gamesData = {
+  motor: {
+    "balloon-pop": {
+      title: "Balloon Pop",
+      description: "Pop balloons using your hands in this AR game!",
+      image: "/images/games/balloon-pop.jpg",
+      path: "/games/motor/balloon-pop",
+      category: "motor",
+      difficulty: "medium",
+      players: "1 player",
+      isHot: true,
+    },
+  },
+};
