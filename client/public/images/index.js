@@ -12,7 +12,6 @@ import AvatarBuilder from "./avatar-builder.jpeg";
 import Wall1 from "./wall1.png";
 import Coins from "./coins.png";
 import background from "./whiteboard_bg.avif";
-import Wall1 from "./wall1.png";
 
 export {
   FlappyBird,
