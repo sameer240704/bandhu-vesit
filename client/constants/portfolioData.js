@@ -1,20 +1,28 @@
 export const portfolioSummary = {
-    totalValue: 329242,
-    monthlyReturns: 4483,
+    totalValue: 1827,
+    monthlyReturns: 234,
     riskScore: 72,
     goalProgress: 42.3,
     monthlyChange: 12.5,
-    returnsChange: 8.2,
+    returnsChange: 4.2,
 };
 
-export const monthlyData = [
-    { name: "Jan", value: 4000, expenses: 2800, savings: 1200 },
-    { name: "Feb", value: 3000, expenses: 2600, savings: 400 },
-    { name: "Mar", value: 5000, expenses: 2900, savings: 2100 },
-    { name: "Apr", value: 2780, expenses: 2500, savings: 280 },
-    { name: "May", value: 1890, expenses: 2400, savings: -510 },
-    { name: "Jun", value: 2390, expenses: 2200, savings: 190 },
+export const barChartGameData = [
+    { name: "Level 1", wins: 15, losses: 5, abandonments: 2 },
+    { name: "Level 2", wins: 12, losses: 8, abandonments: 3 },
+    { name: "Level 3", wins: 10, losses: 10, abandonments: 4 },
+    { name: "Level 4", wins: 8, losses: 12, abandonments: 2 },
+    { name: "Level 5", wins: 6, losses: 14, abandonments: 1 },
+    { name: "Level 6", wins: 4, losses: 16, abandonments: 0 },
 ];
+
+export const gameAnalysisMetrics = {
+    strategySkill: 75,
+    reflexSpeed: 60,
+    coordination: 80,
+    knowledge: 50,
+    riskScore: 65,
+};
 
 export const assetAllocation = (() => {
     const initialData = [
@@ -37,13 +45,34 @@ export const assetAllocation = (() => {
     return calculatedData;
 })();
 
+export const mostPlayedGamesData = (() => {
+    const initialData = [
+        { name: "Cognitive Development", game: "Chess", plays: 520, color: "#4F46E5" }, // Purple
+        { name: "Emotional Well-being", game: "Mindfulness Meditation App", plays: 450, color: "#10B981" }, // Green
+        { name: "Social Games", game: "Codenames", plays: 380, color: "#F59E0B" }, // Yellow/Orange
+        { name: "Motor Skills", game: "Just Dance", plays: 400, color: "#EF4444" }, // Red
+        { name: "Others", game: "Sudoku", plays: 300, color: "#6B7280" }, // Gray
+    ];
+
+    // Calculate total number of plays
+    const totalPlays = initialData.reduce((acc, game) => acc + game.plays, 0);
+
+    // Calculate value as a percentage of total plays
+    const calculatedData = initialData.map((game) => ({
+        ...game,
+        value: parseFloat(((game.plays / totalPlays) * 100).toFixed(2)),
+    }));
+
+    return calculatedData;
+})();
+
 export const performanceData = [
-    { month: "Jan", portfolio: 1000000, benchmark: 980000, risk: 950000 },
-    { month: "Feb", portfolio: 1050000, benchmark: 1000000, risk: 980000 },
-    { month: "Mar", portfolio: 1150000, benchmark: 1100000, risk: 1050000 },
-    { month: "Apr", portfolio: 1200000, benchmark: 1150000, risk: 1100000 },
-    { month: "May", portfolio: 1250000, benchmark: 1200000, risk: 1150000 },
-    { month: "Jun", portfolio: 1300000, benchmark: 1250000, risk: 1200000 },
+    { month: "Jan", score: 50, sessions: 10, avgTime: 25 },
+    { month: "Feb", score: 75, sessions: 12, avgTime: 30 },
+    { month: "Mar", score: 60, sessions: 15, avgTime: 28 },
+    { month: "Apr", score: 80, sessions: 18, avgTime: 32 },
+    { month: "May", score: 70, sessions: 20, avgTime: 35 },
+    { month: "Jun", score: 90, sessions: 22, avgTime: 40 },
 ];
 
 export const incomeStreams = [
@@ -81,6 +110,25 @@ export const liabilities = [
         paid: 300000,
         isSecured: true,
         description: "Car loan from HDFC",
+    },
+];
+
+export const gameProgress = [
+    {
+        type: "Main Campaign",
+        totalLevels: 20,
+        levelsCompleted: 12,
+        completionReward: "Epic Sword",
+        isBonus: false,
+        description: "The primary storyline",
+    },
+    {
+        type: "Side Quests",
+        totalLevels: 30,
+        levelsCompleted: 15,
+        completionReward: "Legendary Armor",
+        isBonus: true,
+        description: "Additional missions",
     },
 ];
 
