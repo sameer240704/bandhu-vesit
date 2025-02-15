@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# clerk configuration (can include secrets)
+/.clerk/
+../pose-docs
+../hand-detect_example.md
+../pose-docs/html.html
+../pose-docs/index.html
+../pose-docs/js.js
+../pose-docs/css.css
+../pose-docs/mediapipe_docs.md
+mediapipe_docs.md
+hand-detect_example.md
+pose-docs

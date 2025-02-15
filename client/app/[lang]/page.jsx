@@ -2,7 +2,7 @@ import Navbar from "@/components/Home/Navbar";
 
 export default function Home() {
   return (
-    <div className="h-screen" suppressHydrationWarning>
+    <div className="relative h-screen" suppressHydrationWarning>
       <Navbar />
 
       <main className="h-full mx-auto px-5 flex-center">

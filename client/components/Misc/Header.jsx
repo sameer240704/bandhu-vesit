@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import ChatbotSwitcher from "../Chatbot/ChatbotSwitcher";
+import VoiceControl from "./VoiceControl";
 
 const Header = () => {
   const pathname = usePathname();
@@ -80,6 +81,7 @@ const Header = () => {
           </h1>
         </div>
         <div className="flex-center gap-x-3">
+          <VoiceControl />
           {isInGameRoute && (
             <Button variant="destructive" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />

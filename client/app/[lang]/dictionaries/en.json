@@ -21,7 +21,15 @@
     "color-paint": "Color And Paint",
     "number-match": "Number Match",
     "flappy-bird": "Flappy Bird",
+    "nodulus": "Nodulus",
     "go_back": "Exit Game"
+  },
+  "voice": {
+    "start_listening": "Start listening",
+    "stop_listening": "Stop listening",
+    "listening": "Listening",
+    "you_said": "You said",
+    "error_processing": "Error processing command"
   },
   "home": {
     "signIn": "Sign In",

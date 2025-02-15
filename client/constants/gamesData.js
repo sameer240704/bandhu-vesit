@@ -2,7 +2,10 @@ import {
   colorGame,
   FlappyBird,
   MusicMania,
+  Nodulus,
   numberMatch,
+  BalloonPop,
+  HoleInTheWall,
   WhiteBoard,
 } from "@/public/images";
 
@@ -16,6 +19,36 @@ export const motorGames = [
     imageUrl: MusicMania,
     isHot: true,
     gameLink: "/music-mania",
+  },
+  {
+    title: "Nodulus",
+    publisher: "MindPlay",
+    rating: "4.8",
+    players: "1928",
+    views: "2738",
+    imageUrl: Nodulus,
+    isHot: false,
+    gameLink: "/nodulus",
+  },
+  {
+    title: "Balloon Pop",
+    publisher: "MindPlay",
+    rating: "4.9",
+    players: "1356",
+    views: "6578",
+    imageUrl: BalloonPop,
+    isHot: true,
+    gameLink: "/balloon-pop",
+  },
+  {
+    title: "Hole in the Wall",
+    publisher: "MindPlay",
+    rating: "4.5",
+    players: "2976",
+    views: "4568",
+    imageUrl: HoleInTheWall,
+    isHot: true,
+    gameLink: "/hole-in-the-wall",
   },
   {
     title: "Flappy Bird",
@@ -77,3 +110,18 @@ export const socialGames = [
     gameLink: "/scenario-saga",
   },
 ];
+
+export const gamesData = {
+  motor: {
+    "balloon-pop": {
+      title: "Balloon Pop",
+      description: "Pop balloons using your hands in this AR game!",
+      image: "/images/games/balloon-pop.jpg",
+      path: "/games/motor/balloon-pop",
+      category: "motor",
+      difficulty: "medium",
+      players: "1 player",
+      isHot: true,
+    },
+  },
+};

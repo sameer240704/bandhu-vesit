@@ -106,12 +106,11 @@ const OverviewPage = () => {
 
   return (
     <motion.div
-      className="pr-2 space-y-6 overflow-y-scroll"
+      className="pr-2 space-y-6 overflow-y-scroll scrollable-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Market Indicators */}
       <motion.div
         className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm"
         {...fadeInUp}
@@ -134,8 +133,8 @@ const OverviewPage = () => {
                   indicator.trend === "up"
                     ? "text-green-500"
                     : indicator.trend === "down"
-                    ? "text-red-500"
-                    : "text-gray-500"
+                      ? "text-red-500"
+                      : "text-gray-500"
                 }`}
               >
                 {indicator.value}
