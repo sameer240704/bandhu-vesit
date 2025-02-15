@@ -1,89 +1,212 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import Image from "next/image";
-import { Download } from "lucide-react";
+import {
+  Download,
+  Save,
+  Eraser,
+  ArrowLeft,
+  Image as ImageIcon, // Import Image Icon
+} from "lucide-react";
 import Iridescence from "@/components/ui/iridescence";
+import { TEMPLATE_MAPPING } from "@/constants/ColoringGame/levelData";
 
-const GamePage = ({ level, category, onBackToLevels }) => {
+const GamePage = ({
+  level,
+  category,
+  onBackToLevels,
+  onLevelComplete,
+  onShowGallery, // Add onShowGallery prop
+}) => {
+  if (!level) {
+    return (
+      <div className="text-center text-red-500">
+        <p>Error: Level data is missing.</p>
+      </div>
+    );
+  }
+
   const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedElements, setSelectedElements] = useState({});
   const [score, setScore] = useState(null);
-  const [downloadUrl, setDownloadUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const templateRef = useRef(null);
 
   const colors = [
-    "#FF0000", // Red
-    "#00FF00", // Green
-    "#0000FF", // Blue
-    "#FFFF00", // Yellow
-    "#FF00FF", // Magenta
-    "#00FFFF", // Cyan
-    "#FFA500", // Orange
-    "#800080", // Purple
-    "#A52A2A", // Brown
-    "#FFC0CB", // Pink
-    "#808080", // Gray
-    "#000080", // Navy
-    "#D2691E", // Chocolate
-    "#87CEEB", // Sky Blue
+    "#FF0000",
+    "#00FF00",
+    "#0000FF",
+    "#FFFF00",
+    "#FF00FF",
+    "#00FFFF",
+    "#FFA500",
+    "#800080",
+    "#A52A2A",
+    "#FFC0CB",
+    "#808080",
+    "#000080",
+    "#D2691E",
+    "#87CEEB",
   ];
 
-  const countUncoloredParts = () => {
-    return 5;
+  const TemplateImage = level?.image;
+
+  const handleElementClick = (elementId) => {
+    if (!selectedColor) return;
+    setSelectedElements((prev) => ({
+      ...prev,
+      [elementId]: selectedColor,
+    }));
+    console.log("Element clicked: ", elementId);
   };
 
-  const getColoringData = () => {
-    return {
-      levelId: level.id,
-      category: category,
-      coloredAreas: [],
-      totalParts: 20,
-      uncoloredParts: countUncoloredParts(),
-    };
+  const calculateProgress = () => {
+    const coloredElements = Object.keys(selectedElements).length;
+    const totalRequired = level?.requiredElements?.length || 1;
+    return (coloredElements / totalRequired) * 100;
   };
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
       setError(null);
+      const progress = calculateProgress();
 
-      const coloringData = getColoringData();
+      const submissionData = {
+        levelId: level.id,
+        category,
+        selectedElements,
+        progress,
+      };
 
       const response = await fetch("/api/submit-coloring", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(coloringData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(submissionData),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit coloring");
-      }
+      if (!response.ok) throw new Error("Failed to submit coloring");
 
       const data = await response.json();
       setScore(data.score);
-      setDownloadUrl(data.imageUrl);
+
+      if (data.score >= level.minScore) {
+        onLevelComplete(level.id);
+      }
     } catch (err) {
       setError("Failed to submit. Please try again.");
-      console.error("Submit error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleRemoveColor = (elementId) => {
+    setSelectedElements((prev) => {
+      const newState = { ...prev };
+      delete newState[elementId];
+      return newState;
+    });
+  };
+
   const handleDownload = () => {
-    if (downloadUrl) {
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = `colored-image-${category}-level-${level.id}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (!templateRef.current) return;
+
+    const svg = templateRef.current.cloneNode(true);
+
+    for (const elementId in selectedElements) {
+      const color = selectedElements[elementId];
+      const element = svg.querySelector(`#${elementId}`);
+      if (element) {
+        element.setAttribute("fill", color);
+      }
+    }
+
+    const svgString = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = svgUrl;
+    downloadLink.download = `coloring_page_${level.id}_${category}.svg`;
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    URL.revokeObjectURL(svgUrl);
+  };
+
+  const handleSave = () => {
+    if (!templateRef.current) return;
+
+    // Clone the SVG node and apply colors
+    const svg = templateRef.current.cloneNode(true);
+    for (const elementId in selectedElements) {
+      const color = selectedElements[elementId];
+      const element = svg.querySelector(`#${elementId}`);
+      if (element) {
+        element.setAttribute("fill", color);
+      }
+    }
+
+    // Serialize the SVG to a string
+    const svgString = new XMLSerializer().serializeToString(svg);
+
+    // Convert SVG to data URL
+    const svgDataUrl = `data:image/svg+xml;base64,${btoa(svgString)}`;
+
+    try {
+      const saveData = {
+        selectedElements: selectedElements,
+        imageDataUrl: svgDataUrl, // Save the data URL
+      };
+      localStorage.setItem(
+        `coloringGame-${level.id}-${category}`,
+        JSON.stringify(saveData)
+      );
+      setSaved(true);
+      console.log("Game saved successfully!");
+    } catch (error) {
+      console.error("Error saving game:", error);
+      setSaved(false);
     }
   };
+
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(
+        `coloringGame-${level.id}-${category}`
+      );
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        setSelectedElements(parsedData.selectedElements || {});
+        setSaved(true);
+      }
+    } catch (error) {
+      console.error("Error loading saved game:", error);
+      setSaved(false);
+    }
+  }, [level, category]);
+
+  // Function to apply colors to SVG elements. This now uses a ref to the template.
+  useEffect(() => {
+    if (templateRef.current) {
+      const svg = templateRef.current;
+      for (const elementId in selectedElements) {
+        const color = selectedElements[elementId];
+        const element = svg.querySelector(`#${elementId}`); // Find the element by ID
+
+        if (element) {
+          element.setAttribute("fill", color); // Set the fill color
+          // Optional:  Set stroke color as well, if needed.
+          // element.setAttribute("stroke", color);
+        }
+      }
+    }
+  }, [selectedElements]); // Re-run when selectedElements change
 
   return (
     <motion.div
@@ -104,32 +227,37 @@ const GamePage = ({ level, category, onBackToLevels }) => {
         animate={{ x: 0 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="w-32"
+        className="z-10 mb-8 w-24"
       >
         <Button
           variant="outline"
           className="hover:bg-purple-500 hover:text-white"
           onClick={onBackToLevels}
         >
-          Back to Levels
+          <ArrowLeft className="mr-2" />
+          Back
         </Button>
       </motion.div>
 
-      <div className="max-w-4xl mx-auto flex flex-col justify-center gap-8 h-3/4">
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow-lg p-8 mb-8"
-        >
-          <Image
-            src={level.image}
-            width={600}
-            height={400}
-            alt="Coloring Canvas"
-            className="w-full object-contain"
-          />
-        </motion.div>
+      <div className="max-w-4xl my-10 mx-auto flex flex-col justify-center gap-8 h-3/4">
+        {TemplateImage ? (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white m-10 rounded-lg shadow-lg p-8 mb-8"
+          >
+            {/* Attach the ref to the TemplateImage component */}
+            <TemplateImage
+              onClick={handleElementClick}
+              selectedElements={selectedElements}
+              className=" w-full h-full"
+              ref={templateRef}
+            />
+          </motion.div>
+        ) : (
+          <p className="text-center text-red-500">Template not found.</p>
+        )}
 
         <motion.div
           initial={{ y: 50, opacity: 0 }}
@@ -143,9 +271,6 @@ const GamePage = ({ level, category, onBackToLevels }) => {
                 key={index}
                 whileHover={{ scale: 1.2, rotate: 360 }}
                 whileTap={{ scale: 0.8 }}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                // transition={{ delay: 0.1 + index * 0.1 }}
               >
                 <Button
                   className="w-12 h-12 rounded-full p-0"
@@ -166,21 +291,44 @@ const GamePage = ({ level, category, onBackToLevels }) => {
                 {loading ? "Submitting..." : "Submit Coloring"}
               </Button>
             </motion.div>
-
-            {downloadUrl && (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={() => templateRef.current && setSelectedColor(null)}
+                className="bg-gray-400 hover:bg-gray-500 text-white"
               >
-                <Button
-                  onClick={handleDownload}
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Image
-                </Button>
-              </motion.div>
-            )}
+                <Eraser className="mr-2" />
+                Remove Color
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={handleSave}
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                <Save className="mr-2" />
+                Save
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={handleDownload}
+                className="bg-green-500 hover:bg-green-600 text-white"
+              >
+                <Download className="mr-2" />
+                Download
+              </Button>
+            </motion.div>
+
+            {/* Gallery Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={onShowGallery} // Call the onShowGallery prop
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <ImageIcon className="mr-2" />
+                Gallery
+              </Button>
+            </motion.div>
           </div>
 
           {error && (
@@ -197,7 +345,6 @@ const GamePage = ({ level, category, onBackToLevels }) => {
             >
               <h3 className="font-semibold text-purple-800">Results:</h3>
               <p>Your Score: {score}</p>
-              <p>Remaining Parts to Color: {countUncoloredParts()}</p>
             </motion.div>
           )}
         </motion.div>
