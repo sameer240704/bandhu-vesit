@@ -12,7 +12,7 @@ const Navbar = () => {
   const { dict, currentLang } = useLanguage();
 
   return (
-    <nav className="w-screen bg-white shadow-lg absolute top-0">
+    <nav className="z-10 w-screen bg-white shadow-lg absolute top-0">
       <div className="mx-auto px-10">
         <div className="flex justify-between items-center h-16">
           <Link href={`/${currentLang}`} className="flex items-center">

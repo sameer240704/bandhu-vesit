@@ -6,22 +6,10 @@ const ColoringGameSchema = new Schema({
     {
       name: { type: String, required: true, unique: true },
       description: { type: String },
-    },
-  ],
-  levels: [
-    {
-      category: {
-        type: Schema.Types.ObjectId,
-        ref: "categories",
-        required: true,
-      },
-      name: { type: String, required: true },
-      description: { type: String },
-
-      colors: [
+      levels: [
         {
-          name: { type: String, required: true },
-          hex_code: { type: String, required: true },
+          name: { type: number, required: true },
+          description: { type: String },
         },
       ],
     },
@@ -29,60 +17,22 @@ const ColoringGameSchema = new Schema({
   images: [
     {
       level: {
-        type: Schema.Types.ObjectId,
-        ref: "levels",
+        type: number,
         required: true,
       },
       category: {
-        type: Schema.Types.ObjectId,
-        ref: "categories",
+        type: String,
         required: true,
       },
       image_url: { type: String, required: true },
-      outline_url: { type: String, required: true },
-    },
-  ],
-  colors: [
-    {
-      name: { type: String, required: true, unique: true },
-      hex_code: { type: String, required: true },
-    },
-  ],
-  user_colorings: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "users",
-        required: true,
-      },
-      image: {
-        type: Schema.Types.ObjectId,
-        ref: "images",
-        required: true,
-      },
-      color: {
-        type: Schema.Types.ObjectId,
-        ref: "colors",
-        required: true,
-      },
-      timestamp: { type: Date, default: Date.now },
-    },
-  ],
-  game_progress: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "users",
-        required: true,
-      },
-      level: {
-        type: Schema.Types.ObjectId,
-        ref: "levels",
-        required: true,
-      },
-      completed: { type: Boolean, default: false },
-      score: { type: Number, default: 0 },
-      time_taken: { type: Number, default: 0 }, // Time in seconds
+      name: { type: String, required: true },
+      description: { type: String },
+      colors: [
+        {
+          name: { type: String, required: true },
+          hex_code: { type: String, required: true },
+        },
+      ],
     },
   ],
 });
