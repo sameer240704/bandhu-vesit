@@ -168,6 +168,11 @@
     "@eslint/core" "^0.10.0"
     levn "^0.4.1"
 
+"@excalidraw/excalidraw@^0.17.6":
+  version "0.17.6"
+  resolved "https://registry.yarnpkg.com/@excalidraw/excalidraw/-/excalidraw-0.17.6.tgz#5fd208ce69d33ca712d1804b50d7d06d5c46ac4d"
+  integrity sha512-fyCl+zG/Z5yhHDh5Fq2ZGmphcrALmuOdtITm8gN4d8w4ntnaopTXcTfnAAaU3VleDC6LhTkoLOTG6P5kgREiIg==
+
 "@floating-ui/core@^1.6.0":
   version "1.6.9"
   resolved "https://registry.npmjs.org/@floating-ui/core/-/core-1.6.9.tgz"
@@ -448,7 +453,7 @@
 
 "@mediapipe/hands@^0.4.1675469240":
   version "0.4.1675469240"
-  resolved "https://registry.npmjs.org/@mediapipe/hands/-/hands-0.4.1675469240.tgz"
+  resolved "https://registry.yarnpkg.com/@mediapipe/hands/-/hands-0.4.1675469240.tgz#f032b2f5deff5a69430693f94be45dd9854e803f"
   integrity sha512-GxoZvL1mmhJxFxjuyj7vnC++JIuInGznHBin5c7ZSq/RbcnGyfEcJrkM/bMu5K1Mz/2Ko+vEX6/+wewmEHPrHg==
 
 "@mediapipe/tasks-vision@0.10.17":

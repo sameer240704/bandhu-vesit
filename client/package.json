@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.2",
+    "@excalidraw/excalidraw": "^0.17.6",
     "@formatjs/intl-localematcher": "^0.6.0",
     "@google/generative-ai": "^0.21.0",
     "@mediapipe/camera_utils": "^0.3.1675466862",
