@@ -9,7 +9,7 @@ import BalloonPop from "./balloonpop.png";
 import HoleInTheWall from "./holeinthewall.jpg";
 import WhiteBoard from "./whiteboard.png";
 import AvatarBuilder from "./avatar-builder.jpeg";
-
+import Coins from "./coins.png"
 
 export {
     FlappyBird,
@@ -22,5 +22,6 @@ export {
     BalloonPop,
     HoleInTheWall,
     WhiteBoard,
-    AvatarBuilder
+    AvatarBuilder,
+    Coins
 };
