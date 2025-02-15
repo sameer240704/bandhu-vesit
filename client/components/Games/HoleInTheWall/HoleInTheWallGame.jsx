@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import GameCanvas from './GameCanvas';
-import StartMenu from './StartMenu';
-import GameOverDialog from './GameOverDialog';
-import ScoreDisplay from './ScoreDisplay';
-import { useMediaPipe } from './hooks/useMediaPipe';
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import GameCanvas from "./GameCanvas";
+import StartMenu from "./StartMenu";
+import GameOverDialog from "./GameOverDialog";
+import ScoreDisplay from "./ScoreDisplay";
+import { useMediaPipe } from "./hooks/useMediaPipe";
 
 const HoleInTheWallGame = () => {
   // gameState: "menu", "camera-setup", "tracking-setup", "playing", "gameOver"
@@ -13,7 +13,12 @@ const HoleInTheWallGame = () => {
   const [score, setScore] = useState(null);
   const [error, setError] = useState(null);
   const videoRef = useRef(null);
-  const { segmentationMask, initializeCamera, initializeHolistic, stopMediaPipe } = useMediaPipe(videoRef);
+  const {
+    segmentationMask,
+    initializeCamera,
+    initializeHolistic,
+    stopMediaPipe,
+  } = useMediaPipe(videoRef);
 
   const handleStartCamera = async () => {
     try {
@@ -21,7 +26,9 @@ const HoleInTheWallGame = () => {
       await initializeCamera();
       setGameState("camera-setup");
     } catch (err) {
-      setError("Failed to start camera. Please ensure camera permissions are granted.");
+      setError(
+        "Failed to start camera. Please ensure camera permissions are granted."
+      );
     }
   };
 
@@ -58,9 +65,7 @@ const HoleInTheWallGame = () => {
         </div>
       )}
 
-      {gameState === "menu" && (
-        <StartMenu onStart={handleStartCamera} />
-      )}
+      {gameState === "menu" && <StartMenu onStart={handleStartCamera} />}
 
       {gameState === "camera-setup" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
@@ -69,7 +74,9 @@ const HoleInTheWallGame = () => {
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white p-8 rounded-2xl shadow-xl text-center space-y-6 relative"
           >
-            <h2 className="text-2xl font-bold text-purple-600">Camera Ready!</h2>
+            <h2 className="text-2xl font-bold text-purple-600">
+              Camera Ready!
+            </h2>
             <p className="text-gray-600">
               Camera initialized. Ready to set up pose tracking?
             </p>
@@ -84,7 +91,7 @@ const HoleInTheWallGame = () => {
       )}
 
       {gameState === "tracking-setup" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -106,15 +113,10 @@ const HoleInTheWallGame = () => {
         </div>
       )}
 
-      {gameState === "playing" && score && (
-        <ScoreDisplay score={score} />
-      )}
+      {gameState === "playing" && score && <ScoreDisplay score={score} />}
 
       {gameState === "gameOver" && (
-        <GameOverDialog
-          score={score}
-          onRetry={handleRetry}
-        />
+        <GameOverDialog score={score} onRetry={handleRetry} />
       )}
 
       {/* Always render GameCanvas so video element exists */}
@@ -128,4 +130,4 @@ const HoleInTheWallGame = () => {
   );
 };
 
-export default HoleInTheWallGame; 
+export default HoleInTheWallGame;

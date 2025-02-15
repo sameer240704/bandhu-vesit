@@ -568,7 +568,6 @@ const ProfilePage = () => {
             </div>
           </motion.div>
 
-          {/* Main Content */}
           <motion.div
             className="lg:col-span-9"
             initial={{ opacity: 0, y: 20 }}
