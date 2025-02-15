@@ -52,7 +52,7 @@ async def ai_financial_path(
 
 @app.post("/ai-chatbot")
 async def ai_chatbot(input: str = Form(...), type: str = Form("chatbot")):
-    response = await process_input(input, type)  # Await the response
+    response = process_input(input, type)  # Await the response
 
     return response
 
