@@ -3,6 +3,7 @@ import {
   FlappyBird,
   MusicMania,
   numberMatch,
+  WhiteBoard,
 } from "@/public/images";
 
 export const motorGames = [
@@ -38,6 +39,16 @@ export const emotionalGames = [
     imageUrl: colorGame,
     isHot: true,
     gameLink: "/color-paint",
+  },
+  {
+    title: "Whiteboard",
+    publisher: "MindPlay",
+    rating: "4.7",
+    players: "982",
+    views: "424",
+    imageUrl: WhiteBoard,
+    isHot: true,
+    gameLink: "/whiteboard",
   },
 ];
 

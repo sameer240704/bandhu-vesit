@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { LEVEL_DATA } from "@/constants/ColoringGame/levelData";
+import Iridescence from "@/components/ui/iridescence";
 
 const LevelSelect = ({
   category,
@@ -18,23 +19,30 @@ const LevelSelect = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-b from-purple-100 to-blue-100 p-8"
+      className="relative min-h-screen bg-transparent p-8"
     >
-        <motion.div
-          initial={{ x: -50 }}
-          animate={{ x: 0 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="mb-8 w-24 justify-between"
+      <Iridescence
+        color={[1, 1, 1]}
+        mouseReact={false}
+        amplitude={0.1}
+        speed={0.75}
+        className="absolute top-0 left-0 w-full h-full opacity-50 -z-10"
+      />
+      <motion.div
+        initial={{ x: -50 }}
+        animate={{ x: 0 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="mb-8 w-24 justify-between"
+      >
+        <Button
+          variant="outline"
+          className="w-24 hover:bg-purple-500 hover:text-white"
+          onClick={onBackToCategories}
         >
-          <Button
-            variant="outline"
-            className="w-24 hover:bg-purple-500 hover:text-white"
-            onClick={onBackToCategories}
-          >
-            Back
-          </Button>
-        </motion.div>
+          Back
+        </Button>
+      </motion.div>
 
       <motion.h2
         initial={{ y: -50 }}

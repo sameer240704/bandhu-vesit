@@ -47,7 +47,7 @@ const MemoryMastery = () => {
     showCelebration: false,
     startTime: 0,
   });
-  const [unlockedLevels, setUnlockedLevels] = useState(1);
+  const [unlockedLevels, setUnlockedLevels] = useState(10);
   const [settings, setSettings] = useState({
     soundEnabled: true,
     musicEnabled: true,

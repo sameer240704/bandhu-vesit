@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import { Download } from "lucide-react";
+import Iridescence from "@/components/ui/iridescence";
 
 const GamePage = ({ level, category, onBackToLevels }) => {
   const [selectedColor, setSelectedColor] = useState(null);
@@ -89,8 +90,15 @@ const GamePage = ({ level, category, onBackToLevels }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-b from-purple-100 to-blue-100 p-3"
+      className="relative min-h-screen bg-transparent p-3"
     >
+      <Iridescence
+        color={[1, 1, 1]}
+        mouseReact={false}
+        amplitude={0.1}
+        speed={0.75}
+        className="absolute top-0 left-0 w-full h-full opacity-50 -z-10"
+      />
       <motion.div
         initial={{ x: -50 }}
         animate={{ x: 0 }}
@@ -107,7 +115,7 @@ const GamePage = ({ level, category, onBackToLevels }) => {
         </Button>
       </motion.div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto flex flex-col justify-center gap-8 h-3/4">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
