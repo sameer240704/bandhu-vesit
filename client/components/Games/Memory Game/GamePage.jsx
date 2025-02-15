@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { Card } from "@/components/ui/card";
+import React, { useState, useEffect, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Repeat, ArrowLeft } from "lucide-react";
 import Confetti from "react-confetti";
 import { Button } from "@/components/ui/button";
@@ -157,15 +157,11 @@ const GamePage = ({ onBack, gameState, onCardClick, getLevelConfig }) => {
                       ${gameState.showCelebration && card.isMatched ? "animate-bounce" : ""}
                       rounded-lg
                     `}
-                    onClick={() => onCardClick(card.id)}
+                    onClick={() => onCardClick(card.id, card.isMatched)}
                   >
                     <motion.div
                       initial={false}
-                      animate={
-                        {
-                          // rotateY: card.isFlipped || card.isMatched ? 180 : 0,
-                        }
-                      }
+                      animate={{}}
                       transition={{ duration: 0.6, type: "spring" }}
                     >
                       {card.isFlipped || card.isMatched ? (
