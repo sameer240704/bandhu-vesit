@@ -26,7 +26,6 @@ export {
   WhiteBoard,
   AvatarBuilder,
   background,
-  Coins
   Coins,
   Wall1,
 };
