@@ -1,53 +1,65 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { GAME_CONFIG, POSE_CONNECTIONS } from './constants';
+import { Wall1 } from '@/public/images';
 
-const GameCanvas = ({ videoRef, segmentationMask, onGameOver, showVideo }) => {
+const GameCanvas = ({ videoRef, segmentationMask, onGameOver, showVideo, gameState }) => {
   const canvasRef = useRef(null);
   const [wallImage, setWallImage] = useState(null);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [animationFrame, setAnimationFrame] = useState(null);
   
-  const ANIMATION_DURATION = 3000; // 3 seconds
-  const INITIAL_SCALE = 1.5;
-  const FINAL_SCALE = 1.0;
-  const INITIAL_OPACITY = 0;
-  const FINAL_OPACITY = 1;
+  // Set canvas dimensions on mount and window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (canvasRef.current) {
+        const viewportHeight = window.innerHeight * 0.8;
+        const aspectRatio = 16 / 9; // Changed to match BalloonGame
+        const width = viewportHeight * aspectRatio;
+        
+        canvasRef.current.width = width;
+        canvasRef.current.height = viewportHeight;
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Load the wall image
     const img = new Image();
-    img.src = '/cutouts/wall1.jpg'; // Update path to your wall image
+    img.src = Wall1;
     img.onload = () => setWallImage(img);
   }, []);
 
   useEffect(() => {
-    if (showVideo && wallImage) {
+    if (showVideo && wallImage && gameState === 'playing') {
       setGameStartTime(performance.now());
-      requestAnimationFrame(gameLoop);
+      const frame = requestAnimationFrame(gameLoop);
+      setAnimationFrame(frame);
     }
+
     return () => {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
     };
-  }, [showVideo, wallImage]);
+  }, [showVideo, wallImage, gameState]);
 
   const gameLoop = (timestamp) => {
-    if (!gameStartTime) return;
+    if (!gameStartTime || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const elapsed = timestamp - gameStartTime;
-    const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-
-    // Calculate current animation values
-    const currentScale = INITIAL_SCALE + progress * (FINAL_SCALE - INITIAL_SCALE);
-    const currentOpacity = INITIAL_OPACITY + progress * (FINAL_OPACITY - INITIAL_OPACITY);
+    const progress = Math.min(elapsed / GAME_CONFIG.ANIMATION_DURATION, 1);
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw mirrored video feed if available
+    // Draw mirrored video feed
     if (videoRef.current) {
       ctx.save();
       ctx.scale(-1, 1);
@@ -61,33 +73,57 @@ const GameCanvas = ({ videoRef, segmentationMask, onGameOver, showVideo }) => {
       ctx.restore();
     }
 
-    // Draw wall with current animation parameters
-    ctx.save();
-    ctx.globalAlpha = currentOpacity;
-    const scaledWidth = wallImage.width * currentScale;
-    const scaledHeight = wallImage.height * currentScale;
-    const x = (canvas.width - scaledWidth) / 2;
-    const y = (canvas.height - scaledHeight) / 2;
-    ctx.drawImage(wallImage, x, y, scaledWidth, scaledHeight);
-    ctx.restore();
-
-    // Draw player silhouette
-    if (segmentationMask) {
+    // Draw wall with animation
+    if (wallImage) {
       ctx.save();
-      ctx.drawImage(segmentationMask, 0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'source-in';
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = progress;
+      const scaledWidth = wallImage.width * progress;
+      const scaledHeight = wallImage.height * progress;
+      const x = (canvas.width - scaledWidth) / 2;
+      const y = (canvas.height - scaledHeight) / 2;
+      ctx.drawImage(wallImage, x, y, scaledWidth, scaledHeight);
       ctx.restore();
+
+      // Draw player silhouette
+      if (segmentationMask) {
+        ctx.save();
+        ctx.drawImage(segmentationMask, 0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      // Check if animation is complete
+      if (progress < 1) {
+        const frame = requestAnimationFrame(gameLoop);
+        setAnimationFrame(frame);
+      } else {
+        calculateScore(x, y, scaledWidth, scaledHeight);
+      }
     }
 
-    // Check if animation is complete
-    if (progress < 1) {
-      const frame = requestAnimationFrame(gameLoop);
-      setAnimationFrame(frame);
-    } else {
-      // Calculate score at the moment of impact
-      calculateScore(x, y, scaledWidth, scaledHeight);
+    // Draw pose landmarks LAST so they appear on top
+    if (segmentationMask?.poseLandmarks) {
+      ctx.save();
+      // Draw connectors
+      if (window.drawConnectors && POSE_CONNECTIONS) {
+        window.drawConnectors(
+          ctx, 
+          segmentationMask.poseLandmarks, 
+          POSE_CONNECTIONS,
+          { color: 'white', lineWidth: 4 }
+        );
+      }
+      // Draw landmarks
+      if (window.drawLandmarks) {
+        window.drawLandmarks(
+          ctx, 
+          segmentationMask.poseLandmarks,
+          { color: 'red', lineWidth: 2, radius: 6 }
+        );
+      }
+      ctx.restore();
     }
   };
 
@@ -143,19 +179,28 @@ const GameCanvas = ({ videoRef, segmentationMask, onGameOver, showVideo }) => {
   };
 
   return (
-    <div className="relative w-full h-screen">
-      <video
-        ref={videoRef}
-        className="hidden"
-        playsInline
-        muted
-      />
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        width={1280}
-        height={720}
-      />
+    <div className="flex justify-center items-center w-full h-screen p-4">
+      <div className="relative w-full max-w-[1280px] aspect-video z-50">
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover z-10"
+          playsInline
+          autoPlay
+          muted
+          style={{ 
+            transform: 'scaleX(-1)',
+            display: 'block',
+          }}
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full z-20"
+          style={{ 
+            backgroundColor: 'transparent',
+            pointerEvents: 'none'
+          }}
+        />
+      </div>
     </div>
   );
 };

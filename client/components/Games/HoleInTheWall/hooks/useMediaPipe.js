@@ -1,9 +1,17 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export const useMediaPipe = (videoRef) => {
-  const [holistic, setHolistic] = useState(null);
+  const [pose, setPose] = useState(null);
   const [segmentationMask, setSegmentationMask] = useState(null);
   const [camera, setCamera] = useState(null);
+  const isMounted = useRef(true); // Track component mount status
+
+  useEffect(() => {
+    isMounted.current = true; // Set to true when component mounts
+    return () => {
+      isMounted.current = false; // Set to false when component unmounts
+    };
+  }, []);
 
   const initializeCamera = useCallback(async () => {
     try {
@@ -31,13 +39,28 @@ export const useMediaPipe = (videoRef) => {
 
   const initializeHolistic = useCallback(async () => {
     try {
-      const holistic = new window.Holistic({
+      // Wait for window.Pose to be available with timeout
+      const waitForPose = async (timeout = 5000) => {
+        const startTime = Date.now();
+        while (!window.Pose) {
+          if (Date.now() - startTime > timeout) {
+            throw new Error('Timeout waiting for MediaPipe Pose to load');
+          }
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      };
+
+      await waitForPose();
+      console.log('MediaPipe Pose found:', !!window.Pose);
+
+      const poseInstance = new window.Pose({
         locateFile: (file) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`;
+          console.log('Loading MediaPipe file:', file);
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5/${file}`;
         }
       });
 
-      holistic.setOptions({
+      await poseInstance.setOptions({
         modelComplexity: 1,
         smoothLandmarks: true,
         enableSegmentation: true,
@@ -46,46 +69,59 @@ export const useMediaPipe = (videoRef) => {
         minTrackingConfidence: 0.5
       });
 
-      holistic.onResults((results) => {
+      poseInstance.onResults((results) => {
+        if (!isMounted.current) return; // Prevent state updates after unmount
         if (results.segmentationMask) {
-          setSegmentationMask(results.segmentationMask);
+          setSegmentationMask(results);
         }
       });
 
+      if (!videoRef.current) {
+        throw new Error('Video element not found');
+      }
+
       const camera = new window.Camera(videoRef.current, {
         onFrame: async () => {
-          await holistic.send({ image: videoRef.current });
+          if (videoRef.current) {
+            await poseInstance.send({image: videoRef.current});
+          }
         },
         width: 1280,
         height: 720
       });
 
-      await camera.start();
-
-      setHolistic(holistic);
+      setPose(poseInstance);
       setCamera(camera);
 
-      return holistic;
+      await camera.start();
+      return poseInstance;
     } catch (error) {
-      console.error('Holistic initialization error:', error);
+      console.error('Detailed pose initialization error:', error);
       throw error;
     }
   }, [videoRef]);
 
   const stopMediaPipe = useCallback(() => {
-    if (camera) {
-      camera.stop();
-      setCamera(null);
-    }
-    if (holistic) {
-      holistic.close();
-      setHolistic(null);
+    try {
+      if (camera) {
+        camera.stop();
+        setCamera(null);
+      }
+      if (pose) {
+        pose.close();
+        setPose(null);
+      }
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach(track => {
+          track.stop();
+        });
+        videoRef.current.srcObject = null;
+      }
       setSegmentationMask(null);
+    } catch (error) {
+      console.error('Error stopping MediaPipe:', error);
     }
-    if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-    }
-  }, [holistic, camera, videoRef]);
+  }, [camera, pose, videoRef]);
 
   useEffect(() => {
     return () => {
