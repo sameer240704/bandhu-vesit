@@ -7,5 +7,17 @@ import FlappyBird from "./flappybird.jpeg";
 import Nodulus from "./nodulus.png";
 import BalloonPop from "./balloonpop.png";
 import HoleInTheWall from "./holeinthewall.jpg";
+import WhiteBoard from "./whiteboard.png";
 
-export { FlappyBird, Logo, MusicMania, Thinking, colorGame, numberMatch, Nodulus, BalloonPop, HoleInTheWall};
+export {
+  FlappyBird,
+  Logo,
+  MusicMania,
+  Thinking,
+  colorGame,
+  numberMatch,
+  Nodulus,
+  BalloonPop,
+  HoleInTheWall,
+  WhiteBoard,
+};
