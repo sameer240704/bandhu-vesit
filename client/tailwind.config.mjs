@@ -11,7 +11,8 @@ export default {
       backgroundImage: {
         chatbotBg: "url('/images/background.png')",
         chatBg: "url('/images/chatBg.png')",
-        avatarBuilerBg: "url('/images/avatar-builder.jpeg')"
+        avatarBuilerBg: "url('/images/avatar-builder.jpeg')",
+        bandhuUniverseBg: "url('/images/bandhu-universe.jpeg')"
       },
       colors: {
         purple: {
