@@ -4,134 +4,150 @@ import { Balloon } from "./Balloon";
 
 const GameCanvas = ({
   videoRef,
+  canvasRef,
   handLandmarks,
   onScoreUpdate,
   onGameOver,
   showVideo,
+  gameState,
 }) => {
-  const canvasRef = useRef(null);
   const [balloons, setBalloons] = useState([]);
-  const requestRef = useRef();
-  const previousTimeRef = useRef();
-
-  // Set canvas dimensions on mount
+  const animationRef = useRef();
+  const lastSpawnTime = useRef(0);
+  
+  // Set canvas dimensions on mount and window resize
   useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.width = 1280;
-      canvasRef.current.height = 720;
-    }
+    const handleResize = () => {
+      if (canvasRef.current) {
+        const viewportHeight = window.innerHeight * 0.8;
+        const aspectRatio = 16 / 9;
+        const width = viewportHeight * aspectRatio;
+        
+        canvasRef.current.width = width;
+        canvasRef.current.height = viewportHeight;
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const generateBalloon = () => {
-    if (!canvasRef.current || balloons.length >= 10) return;
-    const newBalloon = new Balloon({
-      x: Math.random() * (canvasRef.current.width - 50) + 25,
-      y: canvasRef.current.height + 25,
-      radius: Math.random() * 20 + 30,
-      speed: Math.random() * 2 + 1,
-    });
-    setBalloons((prev) => [...prev, newBalloon]);
-  };
-
-  const animate = (time) => {
+  useEffect(() => {
     if (!canvasRef.current) return;
-    if (!previousTimeRef.current) {
-      previousTimeRef.current = time;
-    }
-    const deltaTime = time - previousTimeRef.current;
-    const ctx = canvasRef.current.getContext("2d");
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let frameCount = 0;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    const animate = () => {
+      frameCount++;
+      
+      // Only handle balloons if game is playing
+      if (gameState === "playing") {
+        // Spawn new balloon every 60 frames (about 1 second)
+        if (frameCount % 60 === 0) {
+          setBalloons(prev => {
+            if (prev.length < 10) { // Max 10 balloons
+              return [...prev, new Balloon(canvas.width, canvas.height)];
+            }
+            return prev;
+          });
+        }
 
-    // Draw video feed (mirrored) if showVideo flag is true
-    if (videoRef.current) {
-      ctx.save();
-      ctx.scale(-1, 1);
-      ctx.drawImage(
-        videoRef.current,
-        -canvasRef.current.width,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
-      ctx.restore();
-    }
+        // Update balloon positions
+        setBalloons(prev => 
+          prev
+            .map(balloon => {
+              balloon.update();
+              return balloon;
+            })
+            .filter(balloon => !balloon.isPopped && balloon.y > -balloon.radius)
+        );
 
-    // Update and draw balloons
-    setBalloons((prevBalloons) => {
-      const updatedBalloons = prevBalloons
-        .map((balloon) => {
-          balloon.update(deltaTime);
-          balloon.draw(ctx);
-          return balloon;
-        })
-        .filter((balloon) => !balloon.isPopped && balloon.y > -balloon.radius);
-      return updatedBalloons;
-    });
+        // Check for collisions with finger
+        if (handLandmarks && handLandmarks.length > 0) {
+          handLandmarks.forEach(hand => {
+            const indexTip = hand[8]; // Index fingertip
+            if (indexTip) {
+              const tipX = (1 - indexTip.x) * canvas.width;
+              const tipY = indexTip.y * canvas.height;
 
-    // Draw hand landmarks and check collisions
-    if (handLandmarks && handLandmarks.length > 0) {
-      handLandmarks.forEach((hand) => {
-        hand.forEach((landmark) => {
-          ctx.beginPath();
-          ctx.arc(
-            (1 - landmark.x) * canvasRef.current.width,
-            landmark.y * canvasRef.current.height,
-            3,
-            0,
-            2 * Math.PI
-          );
-          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-          ctx.fill();
-        });
-        const indexTip = hand[8];
-        if (indexTip) {
-          const tipX = (1 - indexTip.x) * canvasRef.current.width;
-          const tipY = indexTip.y * canvasRef.current.height;
-          balloons.forEach((balloon) => {
-            if (!balloon.isPopped && balloon.checkCollision(tipX, tipY)) {
-              balloon.pop();
-              onScoreUpdate((prev) => prev + Math.floor(balloon.radius));
+              balloons.forEach(balloon => {
+                if (!balloon.isPopped && balloon.checkCollision(tipX, tipY)) {
+                  const points = balloon.pop();
+                  onScoreUpdate(prev => prev + points);
+                }
+              });
             }
           });
         }
-      });
-    }
+      }
 
-    // Occasionally generate a new balloon
-    if (Math.random() < 0.02) {
-      generateBalloon();
-    }
+      // Draw everything
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw video
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.drawImage(videoRef.current, -canvas.width, 0, canvas.width, canvas.height);
+      ctx.restore();
 
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(animate);
-  };
+      // Draw balloons
+      balloons.forEach(balloon => balloon.draw(ctx));
 
-  // Start the animation loop once on mount
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
+      // Draw hand landmarks
+      if (handLandmarks) {
+        handLandmarks.forEach(hand => {
+          hand.forEach((point, index) => {
+            const x = (1 - point.x) * canvas.width;
+            const y = point.y * canvas.height;
+
+            ctx.beginPath();
+            ctx.arc(x, y, index === 8 ? 8 : 4, 0, Math.PI * 2);
+            ctx.fillStyle = index === 8 ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 255, 0, 0.5)';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+          });
+        });
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
     return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []); // No dependencies so the loop runs continuously
+  }, [gameState, handLandmarks, onScoreUpdate]);
 
   return (
-    <div className="relative w-full h-screen">
-      <video
-        ref={videoRef}
-        className="input_video"
-        playsInline
-        muted
-        style={{ display: "none", pointerEvents: "none" }}
-      />
-      <canvas
-        ref={canvasRef}
-        className="output_canvas absolute inset-0 w-full h-full"
-        style={{ pointerEvents: "none" }}
-      />
+    <div className="flex justify-center items-center w-full h-screen p-4">
+      <div className="relative w-full max-w-[1280px] aspect-video">
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          playsInline
+          autoPlay
+          muted
+          style={{ 
+            transform: 'scaleX(-1)',
+            display: 'block',
+          }}
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full"
+          style={{ 
+            backgroundColor: 'transparent',
+            pointerEvents: 'none'
+          }}
+        />
+      </div>
     </div>
   );
 };

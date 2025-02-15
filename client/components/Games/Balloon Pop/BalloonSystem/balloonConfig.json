@@ -1,0 +1,18 @@
+{
+    "spawnInterval": 1000,
+    "maxBalloons": 2,
+    "radius": {
+      "min": 25,
+      "max": 45
+    },
+    "speed": {
+      "min": 5,
+      "max": 10
+    },
+    "color": {
+      "hueRange": [0, 360],
+      "saturation": 70,
+      "lightness": 50
+    },
+    "spawnAt": "middle"
+  }

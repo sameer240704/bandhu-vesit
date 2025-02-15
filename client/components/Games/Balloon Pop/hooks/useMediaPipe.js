@@ -4,6 +4,7 @@ export const useMediaPipe = (videoRef) => {
   const [hands, setHands] = useState(null);
   const [handLandmarks, setHandLandmarks] = useState([]);
   const [camera, setCamera] = useState(null);
+  const [stream, setStream] = useState(null);
 
   const initializeCamera = useCallback(async () => {
     try {
@@ -11,7 +12,8 @@ export const useMediaPipe = (videoRef) => {
         throw new Error('Video element not found');
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
+      // Get user media stream
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
@@ -19,7 +21,11 @@ export const useMediaPipe = (videoRef) => {
         }
       });
 
-      videoRef.current.srcObject = stream;
+      // Save stream reference
+      setStream(mediaStream);
+      
+      // Set video source
+      videoRef.current.srcObject = mediaStream;
       await videoRef.current.play();
 
       return true;
@@ -31,24 +37,37 @@ export const useMediaPipe = (videoRef) => {
 
   const initializeHandTracking = useCallback(async () => {
     try {
-      // Initialize hands
-      const hands = new window.Hands({
+      // First, stop any existing instances
+      if (hands) {
+        hands.close();
+        setHands(null);
+      }
+      if (camera) {
+        camera.stop();
+        setCamera(null);
+      }
+
+      // Wait for MediaPipe to be ready
+      if (!window.Hands) {
+        throw new Error('MediaPipe Hands not loaded');
+      }
+
+      // Create new hands instance
+      const handsInstance = new window.Hands({
         locateFile: (file) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1.1606863095/${file}`;
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
         }
       });
 
-      // Configure hands
-      hands.setOptions({
-        selfieMode: true,
+      // Set up hands
+      await handsInstance.setOptions({
         maxNumHands: 2,
         modelComplexity: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.9
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
       });
 
-      // Set up hand detection callback
-      hands.onResults((results) => {
+      handsInstance.onResults((results) => {
         if (results.multiHandLandmarks) {
           setHandLandmarks(results.multiHandLandmarks);
         } else {
@@ -56,23 +75,38 @@ export const useMediaPipe = (videoRef) => {
         }
       });
 
-      // Initialize camera after hands is ready
-      const camera = new window.Camera(videoRef.current, {
+      // Ensure video is playing
+      if (videoRef.current?.paused) {
+        await videoRef.current.play();
+      }
+
+      // Create and start camera
+      const cameraInstance = new window.Camera(videoRef.current, {
         onFrame: async () => {
-          await hands.send({ image: videoRef.current });
+          try {
+            await handsInstance.send({image: videoRef.current});
+          } catch (error) {
+            console.error('Frame processing error:', error);
+          }
         },
         width: 1280,
         height: 720
       });
 
-      // Start camera
-      await camera.start();
+      // Set state
+      setHands(handsInstance);
+      setCamera(cameraInstance);
 
-      // Save instances
-      setHands(hands);
-      setCamera(camera);
+      // Start camera last
+      try {
+        await cameraInstance.start();
+        console.log('Camera started successfully');
+        return true;
+      } catch (error) {
+        console.error('Camera start error:', error);
+        throw error;
+      }
 
-      return hands;
     } catch (error) {
       console.error('Hand tracking initialization error:', error);
       throw error;
@@ -80,20 +114,26 @@ export const useMediaPipe = (videoRef) => {
   }, [videoRef]);
 
   const stopMediaPipe = useCallback(() => {
-    if (camera) {
-      camera.stop();
-      setCamera(null);
-    }
-    if (hands) {
-      hands.close();
-      setHands(null);
+    try {
+      if (camera) {
+        camera.stop();
+        setCamera(null);
+      }
+      if (hands) {
+        hands.close();
+        setHands(null);
+      }
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+      }
       setHandLandmarks([]);
+    } catch (error) {
+      console.error('Error stopping MediaPipe:', error);
     }
-    if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-    }
-  }, [hands, camera, videoRef]);
+  }, [camera, hands, stream]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopMediaPipe();
