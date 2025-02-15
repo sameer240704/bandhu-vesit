@@ -59,7 +59,7 @@
     "ps": "Person"
   },
   "chatbot": {
-    "title": "mindplay.ai",
+    "title": "amigo.ai",
     "desc": "Ask your doubts to our personalized chatbot",
     "ask": "Ask",
     "placeholder": "Type your message...",
@@ -90,8 +90,11 @@
   },
   "universe": {
     "avatar": "Avatar Builder",
-    "avatar_desc": "Create and customize your unique digital identity in the Mindplay Universe",
+    "avatar_desc": "Create and customize your unique digital identity in the Bandhu Universe",
     "start": "Start Building",
-    "learn_more": "Learn More"
+    "learn_more": "Learn More",
+    "bandhu": "Bandhu Universe",
+    "bandhu_desc": "Explore and collaborate with others in the Bandhu Universe",
+    "exploring": "Start Exploring"
   }
 }
