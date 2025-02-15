@@ -30,29 +30,23 @@ import {
 } from "lucide-react";
 import {
   portfolioSummary,
-  monthlyData,
-  assetAllocation,
   performanceData,
   liabilities as liabilitiesData,
   recentActivity as recentActivityData,
   riskMetrics,
-  marketIndicators,
+  mostPlayedGamesData,
+  barChartGameData,
+  gameAnalysisMetrics,
+  gameProgress,
 } from "@/constants/portfolioData";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 const OverviewPage = () => {
   const liabilities = liabilitiesData;
   const recentActivity = recentActivityData;
-
-  // Format currency helper - Updated for INR
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0, // INR typically doesn't use decimals
-    }).format(value);
-  };
+  const { user } = useUser();
 
   // Animation variants
   const fadeInUp = {
@@ -74,7 +68,7 @@ const OverviewPage = () => {
     useEffect(() => {
       const duration = 1000; // 1 second animation
       const steps = 60;
-      const stepValue = value / steps;
+      const stepValue = Math.ceil(value / steps);
       let current = 0;
 
       const timer = setInterval(() => {
@@ -90,7 +84,7 @@ const OverviewPage = () => {
       return () => clearInterval(timer);
     }, [value]);
 
-    return formatCurrency(displayValue);
+    return displayValue;
   };
 
   const riskMetricsWithScore = {
@@ -111,39 +105,6 @@ const OverviewPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div
-        className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm"
-        {...fadeInUp}
-      >
-        <div className="flex space-x-4 overflow-x-auto">
-          {marketIndicators.map((indicator) => (
-            <div
-              key={indicator.name}
-              className="flex items-center space-x-2 min-w-fit"
-            >
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {/* Update to Indian market indicators */}
-                {indicator.name
-                  .replace("S&P 500", "NIFTY 50")
-                  .replace("NASDAQ", "SENSEX")
-                  .replace("DOW", "BANK NIFTY")}
-              </span>
-              <span
-                className={`text-sm font-medium ${
-                  indicator.trend === "up"
-                    ? "text-green-500"
-                    : indicator.trend === "down"
-                      ? "text-red-500"
-                      : "text-gray-500"
-                }`}
-              >
-                {indicator.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
       {/* Main Portfolio Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Total Portfolio Value Card */}
@@ -153,7 +114,7 @@ const OverviewPage = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              Financial Firm's Portfolio Value
+              {`${user?.firstName} ${user?.lastName}'s Points`}
             </h2>
             <div className="bg-green-100 dark:bg-green-900/20 p-3 rounded-lg">
               <Wallet className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -188,33 +149,32 @@ const OverviewPage = () => {
               <div className="flex items-center mt-1">
                 <ArrowUpRight className="h-4 w-4 text-green-500" />
                 <span className="text-lg font-semibold text-gray-900 dark:text-white ml-1">
-                  + ₹1,234
+                  + 71
                 </span>
               </div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                YTD Return
+                Total Achievements
               </p>
               <div className="flex items-center mt-1">
                 <ArrowUpRight className="h-4 w-4 text-green-500" />
                 <span className="text-lg font-semibold text-gray-900 dark:text-white ml-1">
-                  + 18.2%
+                  + 4.2%
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Portfolio Health */}
           <div className="border-t dark:border-gray-700 pt-6">
             <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">
-              Portfolio Health
+              Highest Score
             </h3>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <Shield className="h-5 w-5 text-indigo-500 mr-2" />
                 <span className="text-sm text-gray-600 dark:text-gray-300">
-                  Diversification Score
+                  Nodulus Game
                 </span>
               </div>
               <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -237,10 +197,10 @@ const OverviewPage = () => {
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Asset Allocation
+              Most Played Games
             </h3>
             <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium">
-              Rebalance
+              Recalculate
             </button>
           </div>
 
@@ -250,7 +210,7 @@ const OverviewPage = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={assetAllocation.map((asset) => ({
+                    data={mostPlayedGamesData.map((asset) => ({
                       ...asset,
                       name: asset.name
                         .replace("US Stocks", "AAPL")
@@ -269,7 +229,7 @@ const OverviewPage = () => {
                     animationBegin={0}
                     animationDuration={1500}
                   >
-                    {assetAllocation.map((entry, index) => (
+                    {mostPlayedGamesData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
@@ -289,7 +249,7 @@ const OverviewPage = () => {
 
             {/* Asset Information - More compact layout */}
             <div className="w-48 ml-4 flex flex-col justify-center">
-              {assetAllocation.map((asset) => (
+              {mostPlayedGamesData.map((asset) => (
                 <div key={asset.name} className="mb-3 last:mb-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -306,14 +266,13 @@ const OverviewPage = () => {
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400 ml-4">
-                    {formatCurrency(asset.amount)}
+                    {asset.amount}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Target vs Actual - More compact */}
           <div className="border-t dark:border-gray-700 mt-4 pt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-gray-900 dark:text-white">
@@ -326,7 +285,7 @@ const OverviewPage = () => {
             <div className="space-y-1.5">
               <div className="flex items-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400 w-16">
-                  Stocks
+                  Nodulus
                 </span>
                 <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-2">
                   <div
@@ -340,7 +299,7 @@ const OverviewPage = () => {
               </div>
               <div className="flex items-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400 w-16">
-                  Bonds
+                  Memory
                 </span>
                 <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-2">
                   <div
@@ -383,10 +342,10 @@ const OverviewPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Monthly Returns
+                Monthly Earnings
               </p>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                {formatCurrency(portfolioSummary.monthlyReturns)}
+                {portfolioSummary.monthlyReturns}
               </h3>
             </div>
             <div className="bg-blue-100 dark:bg-blue-900/20 p-3 rounded-lg">
@@ -415,7 +374,7 @@ const OverviewPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Risk Score
+                Unfinished Games
               </p>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
                 {riskMetricsWithScore.riskScore}/100
@@ -477,7 +436,7 @@ const OverviewPage = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Portfolio Performance
+            Player Performance
           </h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -488,16 +447,23 @@ const OverviewPage = () => {
                 <Tooltip />
                 <Line
                   type="monotone"
-                  dataKey="portfolio"
-                  name="Your Portfolio"
+                  dataKey="score"
+                  name="Average Score"
                   stroke="#4F46E5"
                   strokeWidth={2}
                 />
                 <Line
                   type="monotone"
-                  dataKey="benchmark"
-                  name="NIFTY 50"
-                  stroke="#9CA3AF"
+                  dataKey="sessions"
+                  name="Sessions Played"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="avgTime"
+                  name="Avg. Time (minutes)"
+                  stroke="#F59E0B"
                   strokeWidth={2}
                 />
               </LineChart>
@@ -505,40 +471,44 @@ const OverviewPage = () => {
           </div>
         </motion.div>
 
-        {/* Income vs Expenses */}
+        {/* Game Statistics */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Income vs Expenses
+            Game Statistics
           </h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData}>
+              <BarChart data={barChartGameData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" name="Income" fill="#4F46E5" />
-                <Bar dataKey="expenses" name="Expenses" fill="#EF4444" />
-                <Bar dataKey="savings" name="Savings" fill="#10B981" />
+                <Bar dataKey="wins" name="Wins" fill="#10B981" />
+                <Bar dataKey="losses" name="Losses" fill="#EF4444" />
+                <Bar
+                  dataKey="abandonments"
+                  name="Abandonments"
+                  fill="#F59E0B"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Risk Metrics Radar */}
+        {/* Game Analytics Radar */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Risk Analysis
+                Game Analysis
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Portfolio risk metrics and analysis
+                Analysis of game skill areas
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 text-sm font-medium">
-                Risk Score: {riskMetricsWithScore.riskScore}/100
+                Skill Level: {gameAnalysisMetrics.riskScore}/100
               </div>
             </div>
           </div>
@@ -551,29 +521,24 @@ const OverviewPage = () => {
                   outerRadius="80%"
                   data={[
                     {
-                      subject: "Volatility",
-                      A: riskMetricsWithScore.volatility,
-                      fullMark: 20,
+                      subject: "Strategy",
+                      A: gameAnalysisMetrics.strategySkill,
+                      fullMark: 100,
                     },
                     {
-                      subject: "Sharpe Ratio",
-                      A: riskMetricsWithScore.sharpeRatio,
-                      fullMark: 3,
+                      subject: "Reflexes",
+                      A: gameAnalysisMetrics.reflexSpeed,
+                      fullMark: 100,
                     },
                     {
-                      subject: "Alpha",
-                      A: riskMetricsWithScore.alpha,
-                      fullMark: 5,
+                      subject: "Coordination",
+                      A: gameAnalysisMetrics.coordination,
+                      fullMark: 100,
                     },
                     {
-                      subject: "Beta",
-                      A: riskMetricsWithScore.beta,
-                      fullMark: 1.5,
-                    },
-                    {
-                      subject: "Max Drawdown",
-                      A: Math.abs(riskMetricsWithScore.maxDrawdown),
-                      fullMark: 20,
+                      subject: "Knowledge",
+                      A: gameAnalysisMetrics.knowledge,
+                      fullMark: 100,
                     },
                   ]}
                 >
@@ -584,7 +549,7 @@ const OverviewPage = () => {
                   />
                   <PolarRadiusAxis stroke="#e5e7eb" />
                   <Radar
-                    name="Risk Metrics"
+                    name="Game Skills"
                     dataKey="A"
                     stroke="#4F46E5"
                     fill="#4F46E5"
@@ -596,34 +561,28 @@ const OverviewPage = () => {
             <div className="space-y-4">
               {[
                 {
-                  label: "Volatility",
-                  value: riskMetricsWithScore.volatility.toFixed(2),
-                  desc: "Price variation over time",
+                  label: "Strategy",
+                  value: gameAnalysisMetrics.strategySkill,
+                  desc: "Strategic thinking",
                   color: "blue",
                 },
                 {
-                  label: "Sharpe Ratio",
-                  value: riskMetricsWithScore.sharpeRatio.toFixed(2),
-                  desc: "Risk-adjusted return",
+                  label: "Reflexes",
+                  value: gameAnalysisMetrics.reflexSpeed,
+                  desc: "Reaction speed",
                   color: "green",
                 },
                 {
-                  label: "Alpha",
-                  value: riskMetricsWithScore.alpha.toFixed(2),
-                  desc: "Excess return vs benchmark",
+                  label: "Coordination",
+                  value: gameAnalysisMetrics.coordination,
+                  desc: "Hand-eye coordination",
                   color: "indigo",
                 },
                 {
-                  label: "Beta",
-                  value: riskMetricsWithScore.beta.toFixed(2),
-                  desc: "Market sensitivity",
+                  label: "Knowledge",
+                  value: gameAnalysisMetrics.knowledge,
+                  desc: "Game knowledge",
                   color: "purple",
-                },
-                {
-                  label: "Max Drawdown",
-                  value: `${riskMetricsWithScore.maxDrawdown.toFixed(2)}%`,
-                  desc: "Largest peak-to-trough decline",
-                  color: "red",
                 },
               ].map((metric) => (
                 <div
@@ -656,45 +615,43 @@ const OverviewPage = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Liabilities Overview
+                Game Progress Overview
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Track and manage your debts
+                Track and manage your game progress
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm">
-                Total Debt:{" "}
-                {formatCurrency(
-                  liabilities.reduce((acc, l) => acc + l.amount, 0)
-                )}
+                Total Missions:{" "}
+                {gameProgress.reduce((acc, l) => acc + l.totalLevels, 0)}
               </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {liabilities.map((liability) => {
-              const progress = (liability.paid / liability.amount) * 100;
+            {gameProgress.map((game) => {
+              const progress = (game.levelsCompleted / game.totalLevels) * 100;
               return (
                 <div
-                  key={liability.type}
+                  key={game.type}
                   className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h4 className="font-medium text-gray-900 dark:text-white flex items-center">
-                        {liability.type}
-                        {liability.isSecured && (
+                        {game.type}
+                        {game.isBonus && (
                           <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400">
-                            Secured
+                            Bonus
                           </span>
                         )}
                       </h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {liability.description}
+                        {game.description}
                       </p>
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
-                      {liability.interestRate}% APR
+                      Reward: {game.completionReward}
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -715,10 +672,10 @@ const OverviewPage = () => {
                     <div className="flex justify-between items-center mt-2">
                       <div className="text-sm">
                         <span className="text-gray-500 dark:text-gray-400">
-                          Monthly:{" "}
+                          Completed:{" "}
                         </span>
                         <span className="font-medium text-gray-900 dark:text-white">
-                          {formatCurrency(liability.monthlyPayment)}
+                          {game.levelsCompleted}
                         </span>
                       </div>
                       <div className="text-sm">
@@ -726,7 +683,7 @@ const OverviewPage = () => {
                           Remaining:{" "}
                         </span>
                         <span className="font-medium text-gray-900 dark:text-white">
-                          {formatCurrency(liability.amount - liability.paid)}
+                          {game.totalLevels - game.levelsCompleted}
                         </span>
                       </div>
                     </div>
@@ -734,97 +691,6 @@ const OverviewPage = () => {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Recent Activity Section */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.5 }}
-      >
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Recent Activity
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Track your latest financial movements
-              </p>
-            </div>
-            <button className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium">
-              View All
-            </button>
-          </div>
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      activity.amount.startsWith("+")
-                        ? "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400"
-                        : "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    <DollarSign className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {activity.type}
-                      </p>
-                      <span
-                        className={`px-2 py-0.5 text-xs rounded-full ${
-                          activity.status === "Completed"
-                            ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                            : "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
-                        }`}
-                      >
-                        {activity.status}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {activity.date}
-                      </p>
-                      {activity.category && (
-                        <>
-                          <span className="text-gray-300 dark:text-gray-600">
-                            •
-                          </span>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {activity.category}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p
-                    className={`text-sm font-medium ${
-                      activity.amount.startsWith("+")
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    {activity.amount}
-                  </p>
-                  {activity.balance && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Balance: {activity.balance}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </motion.div>
