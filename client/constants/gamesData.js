@@ -85,6 +85,7 @@ export const cognitiveGames = [
     imageUrl: numberMatch,
     isHot: true,
     gameLink: "/number-match",
+    favorite: true,
   },
   {
     title: "Nodulus",
@@ -95,6 +96,7 @@ export const cognitiveGames = [
     imageUrl: Nodulus,
     isHot: false,
     gameLink: "/nodulus",
+    favorite: false,
   },
 ];
 
@@ -110,4 +112,3 @@ export const socialGames = [
     gameLink: "/scenario-saga",
   },
 ];
-

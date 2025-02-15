@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -8,6 +9,9 @@ import { Logo } from "@/public/images";
 import { Button } from "../ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { Star, StarOff } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import updateFavoriteGames, { updateUser } from "@/lib/actions/user.action";
 
 const GameCard = ({
   title,
@@ -19,14 +23,36 @@ const GameCard = ({
   imageUrl,
   isHot = false,
   gameLink,
+  favorite,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { dict } = useLanguage();
+  const [isFavorite, setIsFavorite] = useState(favorite);
 
   const handleGameClick = () => {
     const newPath = `${pathname}/${gameLink}`;
     router.push(newPath);
+  };
+
+  const { user } = useUser();
+
+  const handleFavoriteClick = async (e) => {
+    e.stopPropagation();
+    const userId = user?.id;
+
+    if (userId) {
+      try {
+        await updateFavoriteGames(userId, title, !isFavorite); // Update using imported action
+        setIsFavorite(!isFavorite); // Toggle the local favorite state
+      } catch (error) {
+        console.error("Error updating favorites:", error);
+        // Display an error message to the user
+      }
+    } else {
+      console.log("User not logged in.");
+      // Display a message to the user
+    }
   };
 
   return (
@@ -37,6 +63,20 @@ const GameCard = ({
           alt={title}
           className="w-full h-52 object-cover rounded-lg border border-white"
         />
+
+        <Button
+          onClick={handleFavoriteClick}
+          className="absolute bottom-2 right-2 bg-purple-500 hover:bg-purple-600 flex justify-center items-center gap-1"
+        >
+          {isFavorite ? (
+            <Star className="w-7 h-7 text-green-500" />
+          ) : (
+            <StarOff className="w-7 h-7 text-green-500" />
+          )}
+
+          <h1 className="text-sm">{dict?.game?.favorite}</h1>
+        </Button>
+
         {isHot && (
           <Badge className="absolute top-2 left-2 bg-green-500 hover:bg-green-600 flex justify-center items-center gap-x-1">
             <FaFire className="size-4" />

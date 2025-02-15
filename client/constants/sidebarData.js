@@ -11,7 +11,7 @@ export const sidebarData = [
     category: "dashboard",
     items: [
       { title: "overview", route: "/overview", icon: RiHome3Line },
-      { title: "recent", route: "/recent", icon: RxDashboard },
+      { title: "favourite", route: "/favourite", icon: RxDashboard },
     ],
   },
   {

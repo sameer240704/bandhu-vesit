@@ -19,6 +19,7 @@ const EmotionalWellBeingPage = () => {
               imageUrl={game.imageUrl}
               isHot={game.isHot}
               gameLink={game.gameLink}
+              favorite={game.favorite}
             />
           ))}
         </div>

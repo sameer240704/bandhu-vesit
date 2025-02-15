@@ -25,7 +25,8 @@
     "go_back": "Exit Game",
     "avatar-builder": "Avatar Builder",
     "scenario-saga": "Scenario Saga",
-    "bandhu-universe": "Bandhu Universe"
+    "bandhu-universe": "Bandhu Universe",
+    "favourite": "Favourite"
   },
   "voice": {
     "start_listening": "Start listening",
@@ -44,7 +45,7 @@
     "games": "Games",
     "user": "User",
     "overview": "Overview",
-    "recent": "Recent Activities",
+    "favourite": "Favourites",
     "universe": "Bandhu Universe",
     "cognitive": "Cognitive Development",
     "motor": "Motor Skills",
