@@ -63,6 +63,7 @@ const ColoringGame = () => {
           onBackToCategories={handleBackToCategories}
         />
       )}
+
       {gameState === "playing" && currentLevel && (
         <GamePage
           level={currentLevel}
