@@ -33,7 +33,7 @@ async def ai_financial_path(
         raise HTTPException(status_code=500, detail=f"Something went wrong: {str(e)}")
     
 @app.post("/ai-chatbot")
-async def ai_chatbot(input: str = Form(...)):
-    response = process_input(input)
+async def ai_chatbot(input: str = Form(...), type: str = Form("chatbot")):
+    response = process_input(input, type)
 
     return response

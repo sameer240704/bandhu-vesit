@@ -20,7 +20,7 @@ MINDPLAY_GAMES = {
     "Flappy Bird": "Navigate through obstacles with keyboard controls.",
     "Color And Paint": "Express yourself by coloring templates with AI mood analysis.",
     "Scenario Saga": "Create unique storylines through dynamic scenario choices.",
-    "WordChain": "Build vocabulary by connecting words through their last letters."
+    "Word Chain": "Build vocabulary by connecting words through their last letters."
 }
 
 CRISIS_RESOURCES = {
@@ -127,7 +127,7 @@ def speech_to_text():
     except sr.RequestError:
         return "Sorry, the speech service is unavailable."
 
-def process_input(user_input):
+def process_input(user_input, type="chatbot"):
     """Processes the user input and returns the assistant's response."""
     if check_for_crisis(user_input):
         return get_crisis_response()

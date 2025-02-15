@@ -1,5 +1,5 @@
 import {
-  // CameraControls,
+  CameraControls,
   Environment,
   Gltf,
   Html,
@@ -14,29 +14,30 @@ import MessageBox from "./MessageBox";
 import { useLanguage } from "@/context/LanguageContext";
 import { Thinking } from "@/public/images";
 import Image from "next/image";
+import { useChatbot } from "@/context/ChatbotContext";
 
-// const CameraManager = () => {
-//   return (
-//     <CameraControls
-//       minZoom={1}
-//       maxZoom={2}
-//       polarRotateSpeed={-0.3}
-//       azimuthRotateSpeed={-0.3}
-//       mouseButtons={{
-//         left: 1,
-//         wheel: 16,
-//       }}
-//       touches={{
-//         one: 32,
-//         two: 512,
-//       }}
-//       minAzimuthAngle={degToRad(-10)}
-//       maxAzimuthAngle={degToRad(10)}
-//       minPolarAngle={degToRad(90)}
-//       maxPolarAngle={degToRad(100)}
-//     />
-//   );
-// };
+const CameraManager = () => {
+  return (
+    <CameraControls
+      minZoom={1}
+      maxZoom={2}
+      polarRotateSpeed={-0.3}
+      azimuthRotateSpeed={-0.3}
+      mouseButtons={{
+        left: 1,
+        wheel: 16,
+      }}
+      touches={{
+        one: 32,
+        two: 512,
+      }}
+      minAzimuthAngle={degToRad(-10)}
+      maxAzimuthAngle={degToRad(10)}
+      minPolarAngle={degToRad(90)}
+      maxPolarAngle={degToRad(100)}
+    />
+  );
+};
 
 const Loader = ({ progress }) => {
   const { dict } = useLanguage();
@@ -61,9 +62,10 @@ const Experience = () => {
   const [loading, setLoading] = useState(false);
   const [animationNumber, setAnimationNumber] = useState(2);
   const { progress } = useProgress();
+  const { currentBot } = useChatbot();
 
   return (
-    <div className="bg-chatbotBg bg-cover rounded-xl bg-center h-full w-full relative overflow-hidden">
+    <div className="rounded-xl bg-center h-full w-full relative overflow-hidden">
       <div
         className={`z-10 md:justify-center absolute bottom-4 left-4 right-4 flex gap-3 flex-wrap justify-stretch ${
           Math.round(progress) !== 100 ? "hidden" : ""
@@ -74,6 +76,7 @@ const Experience = () => {
           loading={loading}
           setLoading={setLoading}
           setAnimationNumber={setAnimationNumber}
+          currentBot={currentBot}
         />
       </div>
       <div
@@ -89,7 +92,7 @@ const Experience = () => {
         }`}
       >
         {loading && (
-          <Image src={Thinking} alt="thinking" className="h-10 w-auto" />
+          <Image src={Thinking} alt="thinking" className="h-20 w-auto" />
         )}
       </div>
       <Canvas
@@ -103,22 +106,35 @@ const Experience = () => {
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} intensity={0.5} />
         <Suspense fallback={<Loader progress={progress} />}>
-          {/* <Gltf
-            src="/models/background.glb"
-            position={[0, 0, 1]}
-            rotation-y={0}
-            scale={1}
-          /> */}
-          <Chatbot
-            position={[-1.7, -0.8, -0.2]}
-            scale={0.4}
-            rotation-x={degToRad(5)}
-            rotation-y={degToRad(35)}
-            rotation-z={degToRad(-1)}
-            animationNumber={animationNumber}
+          <Gltf
+            src="/models/city.glb"
+            position={[-1, -0.9, -2]}
+            rotation-y={-15}
+            scale={1.25}
           />
+          {currentBot === "cb" ? (
+            <Chatbot
+              position={[-1.7, -0.8, -0.2]}
+              scale={0.4}
+              rotation-x={degToRad(5)}
+              rotation-y={degToRad(35)}
+              rotation-z={degToRad(-1)}
+              animationNumber={animationNumber}
+              name="chatbot"
+            />
+          ) : (
+            <Chatbot
+              position={[-1.7, -0.7, 0]}
+              scale={1}
+              rotation-x={degToRad(5)}
+              rotation-y={degToRad(35)}
+              rotation-z={degToRad(-1)}
+              animationNumber={animationNumber}
+              name="person"
+            />
+          )}
         </Suspense>
-        {/* <CameraManager /> */}
+        <CameraManager />
       </Canvas>
     </div>
   );
