@@ -1,44 +1,37 @@
 import { Wall1 } from "@/public/images";
 
 export const GAME_CONFIG = {
-  PREVIEW_DURATION: 3000, // 3 seconds
-  MATCHING_DURATION: 3000, // 3 seconds
-  SUCCESS_THRESHOLD: 0.9, // 70% of joints must match
-  SAFE_COLOR_THRESHOLD: 230, // RGB value for white detection
-  SCORE_PER_WALL: 100,
-  BODY_JOINTS: [ // List of relevant body joints
-    "leftWrist", "rightWrist", "leftElbow", "rightElbow",
-    "leftShoulder", "rightShoulder", "leftAnkle", "rightAnkle",
-    "leftKnee", "rightKnee", "leftHip", "rightHip"
-  ],
+  ANIMATION_DURATION: 3000, // milliseconds
+  INITIAL_SCALE: 1.5,
+  FINAL_SCALE: 1.0,
+  INITIAL_OPACITY: 0,
+  FINAL_OPACITY: 1,
+  SCORE_TIERS: {
+    PERFECT: 95,
+    GREAT: 85,
+    GOOD: 70
+  },
   WALL_DURATION: 5000, // 5 seconds per wall
   WALL_FADE_IN: 1000, // 1 second fade-in
+  SAFE_COLOR_THRESHOLD: 230, // RGB value for white detection
+  SCORE_PER_WALL: 100,
+  PREVIEW_DURATION: 3000, // 3 seconds
+  MATCHING_DURATION: 3000, // 3 seconds
+  MATCH_THRESHOLD: 0.8, // 80% match required
+  WHITE_PIXEL_THRESHOLD: 245,
+  SCORE_PER_LEVEL: 100,
 };
-
-// Pre-calculated outline polygon for Wall1 (example)
-export const WALL1_OUTLINE = [
-  { x: 0.2, y: 0.3 }, { x: 0.8, y: 0.3 },
-  { x: 0.8, y: 0.7 }, { x: 0.2, y: 0.7 }
-];
 
 export const WALLS = [
   {
     id: 1,
     image: Wall1,
-    outline: WALL1_OUTLINE,
     difficulty: 'easy'
   },
   {
     id: 2,
-    image: Wall1,
-    outline: WALL1_OUTLINE,
-    difficulty: 'easy'
-  },
-  {
-    id: 3,
-    image: Wall1,
-    outline: WALL1_OUTLINE,
-    difficulty: 'easy'
+    image: './cutouts/wall1.png',
+    difficulty: 'medium'
   },
   // Add more walls here as needed
 ];
