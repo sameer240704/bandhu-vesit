@@ -23,7 +23,8 @@
     "flappy-bird": "Flappy Bird",
     "nodulus": "Nodulus",
     "go_back": "Exit Game",
-    "avatar-builder": "Avatar Builder"
+    "avatar-builder": "Avatar Builder",
+    "scenario-saga": "Scenario Saga"
   },
   "voice": {
     "start_listening": "Start listening",
