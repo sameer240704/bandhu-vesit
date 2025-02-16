@@ -136,7 +136,6 @@ const GameFlow = () => {
       }
 
       const response = await fetch(`${AI_SERVER_URL}/ai-game-path`, {
-        // Ensure the API endpoint is correct
         method: "POST",
         body: formData,
       });

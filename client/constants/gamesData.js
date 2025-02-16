@@ -8,6 +8,7 @@ import {
   HoleInTheWall,
   WhiteBoard,
   WordChain,
+  ScenarioSaga,
 } from "@/public/images";
 
 export const motorGames = [
@@ -119,7 +120,7 @@ export const socialGames = [
     rating: "4.7",
     players: "982",
     views: "424",
-    imageUrl: MusicMania,
+    imageUrl: ScenarioSaga,
     isHot: true,
     gameLink: "/scenario-saga",
   },

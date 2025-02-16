@@ -9,6 +9,7 @@ import {
   emotionalGames,
   socialGames,
 } from "@/constants/gamesData";
+import { Button } from "@/components/ui/button";
 
 const GamesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -80,8 +81,30 @@ const GamesPage = () => {
     activeTab === "all"
       ? availableGames.filter((game) => !game.favorite)
       : availableGames.filter((game) => {
-          const gameType = game.type || "other";
-          return gameType === activeTab && !game.favorite;
+          if (activeTab === "cognitive") {
+            return (
+              cognitiveGames.some((cg) => cg.title === game.title) &&
+              !game.favorite
+            );
+          }
+          if (activeTab === "motor") {
+            return (
+              motorGames.some((mg) => mg.title === game.title) && !game.favorite
+            );
+          }
+          if (activeTab === "emotional") {
+            return (
+              emotionalGames.some((eg) => eg.title === game.title) &&
+              !game.favorite
+            );
+          }
+          if (activeTab === "social") {
+            return (
+              socialGames.some((sg) => sg.title === game.title) &&
+              !game.favorite
+            );
+          }
+          return false;
         });
 
   return (
@@ -96,13 +119,12 @@ const GamesPage = () => {
           </p>
         </div>
 
-        {/* Favorites Section */}
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900">
               Favorite Games
             </h2>
-            <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+            <span className="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">
               {favorites.length} Games
             </span>
           </div>
@@ -152,43 +174,62 @@ const GamesPage = () => {
           </div>
         </section>
 
-        {/* Discover Section */}
         <section className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900">
               Discover More Games
             </h2>
             <div className="flex space-x-2">
-              <button
+              <Button
                 onClick={() => setActiveTab("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeTab === "all"
-                    ? "bg-blue-100 text-blue-800"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    : "bg-purple-200 text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 All Games
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setActiveTab("cognitive")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeTab === "cognitive"
-                    ? "bg-blue-100 text-blue-800"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    : "bg-purple-200 text-gray-600 hover:bg-gray-100"
                 }`}
               >
-                Cognitive
-              </button>
-              <button
+                Cognitive Development
+              </Button>
+              <Button
                 onClick={() => setActiveTab("motor")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeTab === "motor"
-                    ? "bg-blue-100 text-blue-800"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    : "bg-purple-200 text-gray-600 hover:bg-gray-100"
                 }`}
               >
-                Motor
-              </button>
+                Motor Skills
+              </Button>
+              <Button
+                onClick={() => setActiveTab("emotional")}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === "motor"
+                    ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    : "bg-purple-200 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                Emotional Well-Being
+              </Button>
+              <Button
+                onClick={() => setActiveTab("social")}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === "motor"
+                    ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    : "bg-purple-200 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                Social Interaction
+              </Button>
             </div>
           </div>
 

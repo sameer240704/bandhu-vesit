@@ -14,6 +14,7 @@ import Coins from "./coins.png";
 import background from "./whiteboard_bg.avif";
 import BandhuUniverse from "./bandhu-universe.jpeg";
 import WordChain from "./word-chain.jpeg";
+import ScenarioSaga from "./scenario-saga.png";
 
 export {
   FlappyBird,
@@ -31,5 +32,6 @@ export {
   Coins,
   Wall1,
   BandhuUniverse,
-  WordChain
+  WordChain,
+  ScenarioSaga
 };
