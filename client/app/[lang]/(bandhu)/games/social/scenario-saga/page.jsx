@@ -4,8 +4,33 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Camera, User, ArrowDown } from "lucide-react";
+import { BookOpen, Camera, User, ArrowDown, X, Maximize2 } from "lucide-react";
 import { AI_SERVER_URL } from "@/constants/utils";
+import Image from "next/image";
+
+const ImageModal = ({ isOpen, onClose, imageData }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+      <div className="relative w-full h-full flex items-center justify-center p-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white hover:bg-white/20 z-50"
+        >
+          <X className="w-6 h-6" />
+        </Button>
+        <img
+          src={`data:image/jpeg;base64,${imageData}`}
+          alt="Scene Full View"
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
+    </div>
+  );
+};
 
 const ScenarioSagaPage = () => {
   const [characterName, setCharacterName] = useState("");
@@ -17,6 +42,8 @@ const ScenarioSagaPage = () => {
   const [story, setStory] = useState([]);
   const [error, setError] = useState("");
   const [storyHistory, setStoryHistory] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const fetchStorySoFar = async () => {
     setError("");
@@ -62,6 +89,10 @@ const ScenarioSagaPage = () => {
     }
   }, [gameId]);
 
+  useEffect(() => {
+    // Re-render when storyHistory changes to ensure image is displayed
+  }, [storyHistory]);
+
   const startNewGame = async () => {
     setError("");
     try {
@@ -79,7 +110,6 @@ const ScenarioSagaPage = () => {
       if (!response.ok) throw new Error("Failed to start game");
 
       const data = await response.json();
-      console.log(data);
       const newGameId = characterName + characterAge;
       setGameId(newGameId);
       setScenario(data.scenario);
@@ -153,9 +183,19 @@ const ScenarioSagaPage = () => {
     }
   };
 
+  const openImageModal = (imageData) => {
+    setSelectedImage(imageData);
+    setModalOpen(true);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Right Side Panel */}
+      <ImageModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        imageData={selectedImage}
+      />
+
       <div className="w-96 bg-white shadow-lg p-6 flex flex-col gap-6">
         <div className="flex items-center gap-2">
           <BookOpen className="w-6 h-6 text-blue-600" />
@@ -211,14 +251,33 @@ const ScenarioSagaPage = () => {
                 <Card className="w-full">
                   <CardContent className="p-6">
                     {storyHistory[0]?.scenes[index]?.image && (
-                      <div className="relative w-full h-64 mb-4 rounded-lg overflow-hidden">
+                      <div className="relative w-full h-96 mb-4 rounded-lg overflow-hidden group">
                         <img
                           src={`data:image/jpeg;base64,${storyHistory[0].scenes[index].image}`}
                           alt={`Scene ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() =>
+                            openImageModal(storyHistory[0].scenes[index].image)
+                          }
                         />
-                        <div className="absolute top-2 right-2 bg-black/50 p-2 rounded-full">
-                          <Camera className="w-5 h-5 text-white" />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200">
+                          <div className="absolute top-2 right-2 flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-white hover:bg-white/20"
+                              onClick={() =>
+                                openImageModal(
+                                  storyHistory[0].scenes[index].image
+                                )
+                              }
+                            >
+                              <Maximize2 className="w-5 h-5" />
+                            </Button>
+                            <div className="bg-black/50 p-2 rounded-full">
+                              <Camera className="w-5 h-5 text-white" />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -226,7 +285,7 @@ const ScenarioSagaPage = () => {
                     <p className="text-lg mb-4">{chapter}</p>
 
                     {index === story.length - 1 && options.length > 0 && (
-                      <div className="space-y-3 mt-6">
+                      <div className="max-full space-y-3 mt-6">
                         <h4 className="font-semibold text-sm text-gray-600">
                           Choose your next action:
                         </h4>
@@ -236,7 +295,7 @@ const ScenarioSagaPage = () => {
                               key={optIndex}
                               onClick={() => chooseOption(optIndex)}
                               variant="outline"
-                              className="w-full text-left justify-start h-auto py-3 hover:bg-blue-50"
+                              className="w-full text-left justify-start h-auto py-3 hover:bg-blue-50 whitespace-normal"
                             >
                               {option}
                             </Button>
@@ -269,7 +328,6 @@ const ScenarioSagaPage = () => {
         )}
       </div>
 
-      {/* Error Display */}
       {error && (
         <div className="fixed bottom-6 right-6 max-w-md">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg">
@@ -283,4 +341,3 @@ const ScenarioSagaPage = () => {
 };
 
 export default ScenarioSagaPage;
-``;

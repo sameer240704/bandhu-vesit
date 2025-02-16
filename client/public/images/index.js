@@ -9,9 +9,10 @@ import BalloonPop from "./balloonpop.png";
 import HoleInTheWall from "./holeinthewall.jpg";
 import WhiteBoard from "./whiteboard.png";
 import AvatarBuilder from "./avatar-builder.jpeg";
+import Wall1 from "./wall1.png";
 import Coins from "./coins.png";
 import background from "./whiteboard_bg.avif";
-import Wall1 from "./wall1.png";
+import BandhuUniverse from "./bandhu-universe.jpeg";
 
 export {
   FlappyBird,
@@ -27,6 +28,6 @@ export {
   AvatarBuilder,
   background,
   Coins,
-  Wall1
-
+  Wall1,
+  BandhuUniverse
 };

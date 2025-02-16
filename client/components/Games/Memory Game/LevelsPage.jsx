@@ -1,12 +1,32 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import Waves from "@/components/ui/waves";
 
-const LevelsPage = ({ onNavigate, onBack, unlockedLevels }) => {
+const LevelsPage = ({ onNavigate, onBack }) => {
   const levels = Array.from({ length: 10 }, (_, i) => i + 1);
+  const [unlockedLevels, setUnlockedLevels] = useState(1); // Default to level 1 unlocked
+
+  useEffect(() => {
+    // Load unlocked levels from local storage on component mount
+    const savedUnlockedLevels = localStorage.getItem("memoryGame_unlockedLevels");
+    if (savedUnlockedLevels) {
+      setUnlockedLevels(parseInt(savedUnlockedLevels, 10));
+    }
+  }, []);
+
+  const handleLevelSelect = (level) => {
+    if (level <= unlockedLevels) {
+      onNavigate("game", { level });
+    }
+  };
+
+  useEffect(() => {
+    // Save unlocked levels to local storage whenever it changes
+    localStorage.setItem("unlockedLevels", unlockedLevels.toString());
+  }, [unlockedLevels]);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -112,16 +132,14 @@ const LevelsPage = ({ onNavigate, onBack, unlockedLevels }) => {
               whileTap={level <= unlockedLevels ? "tap" : {}}
             >
               <Button
-                onClick={() =>
-                  level <= unlockedLevels && onNavigate("game", { level })
-                }
+                onClick={() => handleLevelSelect(level)}
                 disabled={level > unlockedLevels}
                 className={`
                  w-full h-full text-2xl font-bold border-2 border-[#B2A5FF] rounded-lg
                   ${
                     level <= unlockedLevels
-                      ? "bg-white hover:bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-gray-500 hover:text-white"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-gradient-to-br from-indigo-500 to-purple-500 text-white"
+                      : "bg-white text-gray-500"
                   }
                 `}
               >
@@ -130,6 +148,7 @@ const LevelsPage = ({ onNavigate, onBack, unlockedLevels }) => {
                     initial={{ rotate: 0 }}
                     animate={{ rotate: [0, -10, 10, 0] }}
                     transition={{ duration: 0.5, delay: 0.2 + level * 0.1 }}
+                    className="w-8 h-8 flex items-center justify-center"
                   >
                     <Lock className="w-8 h-8" />
                   </motion.div>

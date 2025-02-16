@@ -15,16 +15,16 @@ const GAME_CONFIG = {
   HEIGHT: 720,
   MAX_BALLOONS: 15,
   COLORS: [
-    [255, 182, 193, 0.7],  // Pastel Pink
-    [147, 197, 253, 0.7],  // Pastel Blue
-    [255, 223, 186, 0.7],  // Pastel Orange
-    [207, 235, 176, 0.7],  // Pastel Green
-    [255, 255, 186, 0.7],  // Pastel Yellow
-    [221, 160, 221, 0.7]   // Pastel Purple
+    [255, 182, 193, 0.7], // Pastel Pink
+    [147, 197, 253, 0.7], // Pastel Blue
+    [255, 223, 186, 0.7], // Pastel Orange
+    [207, 235, 176, 0.7], // Pastel Green
+    [255, 255, 186, 0.7], // Pastel Yellow
+    [221, 160, 221, 0.7], // Pastel Purple
   ],
   BASE_SPAWN_INTERVAL: 1,
   MIN_SPAWN_INTERVAL: 0.3,
-  MISSED_PENALTY: 35
+  MISSED_PENALTY: 35,
 };
 
 class Balloon {
@@ -32,10 +32,11 @@ class Balloon {
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
     this.radius = Math.floor(Math.random() * 30 + 15);
-    this.speed = Math.floor(Math.random() * 15 + 10);
+    this.speed = Math.floor(Math.random() * 5 + 5);
     this.x = Math.random() * (canvasWidth - this.radius * 2) + this.radius;
     this.y = canvasHeight + this.radius;
-    this.color = GAME_CONFIG.COLORS[Math.floor(Math.random() * GAME_CONFIG.COLORS.length)];
+    this.color =
+      GAME_CONFIG.COLORS[Math.floor(Math.random() * GAME_CONFIG.COLORS.length)];
     this.isPopped = false;
     this.drift = Math.random() * 1 - 0.5;
   }
@@ -44,7 +45,7 @@ class Balloon {
     if (!this.isPopped) {
       this.y -= this.speed * dt;
       this.x += this.drift * dt * 60;
-      
+
       // Bounce off walls with angle control
       if (this.x < this.radius) {
         this.drift = Math.abs(this.drift) * 0.5; // Reduce bounce angle
@@ -71,7 +72,7 @@ const useBalloonGame = (videoRef, canvasRef, handLandmarks, gameState) => {
 
   useEffect(() => {
     let animationFrame;
-    const ctx = canvasRef.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext("2d");
 
     const gameLoop = () => {
       if (!ctx || !videoRef.current) return;
@@ -92,42 +93,46 @@ const useBalloonGame = (videoRef, canvasRef, handLandmarks, gameState) => {
       ctx.restore();
 
       // Only process game logic if playing
-      if (gameState === 'playing') {
+      if (gameState === "playing") {
         const now = Date.now();
         const dt = (now - lastSpawn.current) / 1000;
 
         // Spawn new balloons
         if (now - lastSpawn.current > spawnInterval.current * 1000) {
-          setBalloons(prev => [
+          setBalloons((prev) => [
             ...prev.slice(-GAME_CONFIG.MAX_BALLOONS),
-            new Balloon(ctx.canvas.width, ctx.canvas.height)
+            new Balloon(ctx.canvas.width, ctx.canvas.height),
           ]);
           lastSpawn.current = now;
           spawnInterval.current = Math.max(
             GAME_CONFIG.MIN_SPAWN_INTERVAL,
-            GAME_CONFIG.BASE_SPAWN_INTERVAL - (score * 0.0002)
+            GAME_CONFIG.BASE_SPAWN_INTERVAL - score * 0.0002
           );
         }
 
         // Update balloons
-        setBalloons(prev => prev.map(balloon => {
-          balloon.update(dt);
-          return balloon;
-        }).filter(b => !b.isPopped && b.y > -b.radius));
+        setBalloons((prev) =>
+          prev
+            .map((balloon) => {
+              balloon.update(dt);
+              return balloon;
+            })
+            .filter((b) => !b.isPopped && b.y > -b.radius)
+        );
 
         // Draw balloons first
-        balloons.forEach(balloon => {
+        balloons.forEach((balloon) => {
           if (!balloon.isPopped) {
             ctx.beginPath();
             ctx.arc(balloon.x, balloon.y, balloon.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${balloon.color.join(',')})`;
+            ctx.fillStyle = `rgba(${balloon.color.join(",")})`;
             ctx.fill();
           }
         });
 
         // Draw hand landmarks after balloons
         if (handLandmarks) {
-          handLandmarks.forEach(hand => {
+          handLandmarks.forEach((hand) => {
             hand.forEach((point, index) => {
               const x = (1 - point.x) * ctx.canvas.width;
               const y = point.y * ctx.canvas.height;
@@ -135,7 +140,8 @@ const useBalloonGame = (videoRef, canvasRef, handLandmarks, gameState) => {
               // Draw index finger tip larger
               ctx.beginPath();
               ctx.arc(x, y, index === 8 ? 8 : 4, 0, Math.PI * 2);
-              ctx.fillStyle = index === 8 ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 255, 0, 0.5)";
+              ctx.fillStyle =
+                index === 8 ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 255, 0, 0.5)";
               ctx.fill();
               ctx.strokeStyle = "white";
               ctx.stroke();
@@ -144,21 +150,28 @@ const useBalloonGame = (videoRef, canvasRef, handLandmarks, gameState) => {
         }
 
         // Collision detection (keep this separate)
-        if (gameState === 'playing' && handLandmarks) {
-          handLandmarks.forEach(hand => {
+        if (gameState === "playing" && handLandmarks) {
+          handLandmarks.forEach((hand) => {
             const indexTip = hand[8];
             if (indexTip) {
               const fingerX = (1 - indexTip.x) * ctx.canvas.width;
               const fingerY = indexTip.y * ctx.canvas.height;
 
-              setBalloons(prev => prev.map(balloon => {
-                if (!balloon.isPopped && balloon.checkCollision(fingerX, fingerY)) {
-                  balloon.isPopped = true;
-                  setScore(s => s + Math.floor(balloon.speed / 10 + balloon.radius));
-                  return {...balloon};
-                }
-                return balloon;
-              }));
+              setBalloons((prev) =>
+                prev.map((balloon) => {
+                  if (
+                    !balloon.isPopped &&
+                    balloon.checkCollision(fingerX, fingerY)
+                  ) {
+                    balloon.isPopped = true;
+                    setScore(
+                      (s) => s + Math.floor(balloon.speed / 10 + balloon.radius)
+                    );
+                    return { ...balloon };
+                  }
+                  return balloon;
+                })
+              );
             }
           });
         }
@@ -297,9 +310,9 @@ const BalloonGame = () => {
   }, [camera, hands]);
 
   const { score: gameLoopScore } = useBalloonGame(
-    videoRef, 
-    canvasRef, 
-    handLandmarksData, 
+    videoRef,
+    canvasRef,
+    handLandmarksData,
     gameState
   );
 

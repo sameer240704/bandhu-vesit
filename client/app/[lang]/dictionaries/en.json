@@ -4,7 +4,7 @@
     "user": "User",
     "overview": "Overview",
     "recent": "Recent Activities",
-    "universe": "MindPlay Universe",
+    "universe": "Bandhu Universe",
     "cognitive": "Cognitive Development",
     "motor": "Motor Skills",
     "emotional": "Emotional Well-being",
@@ -12,11 +12,11 @@
     "game-flow": "Game Flow",
     "settings": "Settings",
     "profile": "Profile",
-    "chatbot": "MindPlay Chatbot",
+    "chatbot": "Bandhu Chatbot",
     "news": "News & Insights",
     "cb": "Bot",
     "ps": "Person",
-    "world": "MindPlay World",
+    "world": "Bandhu World",
     "music-mania": "Music Mania",
     "color-paint": "Color And Paint",
     "number-match": "Number Match",
@@ -24,7 +24,9 @@
     "nodulus": "Nodulus",
     "go_back": "Exit Game",
     "avatar-builder": "Avatar Builder",
-    "scenario-saga": "Scenario Saga"
+    "scenario-saga": "Scenario Saga",
+    "bandhu-universe": "Bandhu Universe",
+    "favourite": "Favourite"
   },
   "voice": {
     "start_listening": "Start listening",
@@ -43,8 +45,8 @@
     "games": "Games",
     "user": "User",
     "overview": "Overview",
-    "recent": "Recent Activities",
-    "universe": "MindPlay Universe",
+    "favourite": "Favourites",
+    "universe": "Bandhu Universe",
     "cognitive": "Cognitive Development",
     "motor": "Motor Skills",
     "emotional": "Emotional Well-being",
@@ -52,13 +54,13 @@
     "game-flow": "Game Flow",
     "settings": "Settings",
     "profile": "Profile",
-    "chatbot": "MindPlay Chatbot",
+    "chatbot": "Bandhu Chatbot",
     "news": "News & Insights",
     "cb": "Bot",
     "ps": "Person"
   },
   "chatbot": {
-    "title": "mindplay.ai",
+    "title": "amigo.ai",
     "desc": "Ask your doubts to our personalized chatbot",
     "ask": "Ask",
     "placeholder": "Type your message...",
@@ -89,8 +91,11 @@
   },
   "universe": {
     "avatar": "Avatar Builder",
-    "avatar_desc": "Create and customize your unique digital identity in the Mindplay Universe",
+    "avatar_desc": "Create and customize your unique digital identity in the Bandhu Universe",
     "start": "Start Building",
-    "learn_more": "Learn More"
+    "learn_more": "Learn More",
+    "bandhu": "Bandhu Universe",
+    "bandhu_desc": "Explore and collaborate with others in the Bandhu Universe",
+    "exploring": "Start Exploring"
   }
 }

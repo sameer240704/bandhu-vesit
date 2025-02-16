@@ -11,7 +11,7 @@ load_dotenv()
 class ScenarioSaga:
     def __init__(self):
         # API Configuration
-        self.github_token = os.getenv("GITHUB_TOKEN") or "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"
+        self.github_token = os.getenv("GITHUB_TOKEN") or "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"
         self.endpoint = os.getenv("ENDPOINT") or "https://models.inference.ai.azure.com"
         self.model_name = os.getenv("MODEL_NAME") or "gpt-4o"
         self.huggingface_key = os.getenv("HUGGINGFACE_API_KEY") or "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"
@@ -162,8 +162,8 @@ class ScenarioSaga:
             "parameters": {
                 "num_inference_steps": 50,
                 "guidance_scale": 7.5,
-                "width": 512,
-                "height": 512,
+                "width": 1024,
+                "height": 1024,
                 "num_images_per_prompt": 1
             }
         }
