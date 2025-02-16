@@ -94,28 +94,13 @@ export const useMediaPipe = (videoRef) => {
   }, [videoRef]);
 
   const stopMediaPipe = useCallback(() => {
-    try {
-      // Proper cleanup sequence
-      if (camera) {
-        camera.stop();
-        setCamera(null);
-      }
-      if (pose) {
-        pose.close();
-        setPose(null);
-      }
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => {
-          track.stop();
-          videoRef.current.srcObject.removeTrack(track);
-        });
-        videoRef.current.srcObject = null;
-      }
-      setSegmentationMask(null);
-    } catch (error) {
-      console.error('Error stopping MediaPipe:', error);
+    if (pose && typeof pose.close === 'function') {
+      pose.close();
     }
-  }, [pose, camera, videoRef]);
+    if (camera && typeof camera.stop === 'function') {
+      camera.stop();
+    }
+  }, [pose, camera]);
 
   useEffect(() => {
     return () => {

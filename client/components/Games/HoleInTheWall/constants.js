@@ -18,22 +18,26 @@ export const GAME_CONFIG = {
   PREVIEW_DURATION: 3000, // 3 seconds
   MATCHING_DURATION: 3000, // 3 seconds
   MATCH_THRESHOLD: 0.8, // 80% match required
-  WHITE_PIXEL_THRESHOLD: 245,
+  WHITE_PIXEL_THRESHOLD: 230,
   SCORE_PER_LEVEL: 100,
 };
 
 export const WALLS = [
   {
     id: 1,
-    image: Wall1,
+    image: '/images/walls/wall2.jpg',
     difficulty: 'easy'
   },
   {
     id: 2,
-    image: './cutouts/wall1.png',
+    image: '/images/walls/wall2.jpg',
     difficulty: 'medium'
   },
-  // Add more walls here as needed
+  {
+    id: 3,
+    image: '/images/walls/wall2.jpg',
+    difficulty: 'hard'
+  }
 ];
 
 export const POSE_CONNECTIONS = [

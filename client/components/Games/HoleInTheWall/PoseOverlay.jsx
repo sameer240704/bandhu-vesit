@@ -46,7 +46,7 @@ const PoseOverlay = ({ landmarks, videoWidth, videoHeight }) => {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 25 }}
+      style={{ zIndex: 35 }}
     />
   );
 };

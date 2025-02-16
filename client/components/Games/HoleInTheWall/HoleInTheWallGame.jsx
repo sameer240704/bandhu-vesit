@@ -36,6 +36,9 @@ const HoleInTheWallGame = () => {
   // Check if all required scripts are loaded
   const isMediaPipeLoaded = Object.values(scriptsLoaded).every(Boolean);
 
+  // Add a ref to track if stopMediaPipe has been called
+  const stopMediaPipeRef = useRef(false);
+
   useEffect(() => {
     // Debug script loading
     console.log('Current script loading status:', scriptsLoaded);
@@ -82,14 +85,17 @@ const HoleInTheWallGame = () => {
     setIsPlaying(true);
   };
 
-  const handleLevelComplete = () => {
-    setScore(prev => prev + GAME_CONFIG.SCORE_PER_LEVEL);
+  const handleLevelSuccess = () => {
+    setScore(prev => prev + 100);
     setCurrentLevel(prev => prev + 1);
   };
 
   const handleGameOver = () => {
     setGameState("gameOver");
-    stopMediaPipe();
+    if (!stopMediaPipeRef.current) {
+      stopMediaPipe();
+      stopMediaPipeRef.current = true;
+    }
   };
 
   const handleRetry = () => {
@@ -105,6 +111,16 @@ const HoleInTheWallGame = () => {
       pose: true
     });
   };
+
+  // Modify the useEffect cleanup function
+  useEffect(() => {
+    return () => {
+      if (!stopMediaPipeRef.current) {
+        stopMediaPipe();
+        stopMediaPipeRef.current = true;
+      }
+    };
+  }, [stopMediaPipe]);
 
   return (
     <>
@@ -198,19 +214,16 @@ const HoleInTheWallGame = () => {
         </div>
 
         {gameState === "playing" && (
-          <div className="absolute inset-0 z-20">
-            {/* Game Phase Manager */}
+          <>
             <GamePhaseManager
               poseLandmarks={segmentationMask?.poseLandmarks}
-              onSuccess={handleLevelComplete}
+              onSuccess={handleLevelSuccess}
               onFail={handleGameOver}
             />
-            
-            {/* Score Display */}
             <div className="absolute top-4 right-4 bg-black/50 text-white p-4 rounded-lg text-xl font-bold z-40">
               Level: {currentLevel} | Score: {score}
             </div>
-          </div>
+          </>
         )}
 
         {gameState === "gameOver" && (

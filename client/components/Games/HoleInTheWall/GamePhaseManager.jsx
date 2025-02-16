@@ -1,24 +1,49 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GAME_CONFIG } from './constants';
-import { Wall1 } from '@/public/images';
+import { GAME_CONFIG, WALLS } from './constants';
 
 const GamePhaseManager = ({ poseLandmarks, onSuccess, onFail }) => {
-  const [phase, setPhase] = useState('preview');
-  const [timeLeft, setTimeLeft] = useState(GAME_CONFIG.PREVIEW_DURATION);
-  const [whitePixels, setWhitePixels] = useState(new Set());
-  const wallRef = useRef(null);
-  const poseSnapshot = useRef(null);
+  const [wallOpacity, setWallOpacity] = useState(0);
+  const [currentWall, setCurrentWall] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(GAME_CONFIG.WALL_DURATION/1000);
+  const wallDataRef = useRef({
+    whitePixels: new Set(),
+    width: 0,
+    height: 0
+  });
+  const startTimeRef = useRef(Date.now());
+  const animationRef = useRef(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const gameActiveRef = useRef(true);
+
+  // Modify the useEffect hook to set gameActiveRef to true on mount and false on unmount
+  useEffect(() => {
+    gameActiveRef.current = true;
+    return () => {
+      gameActiveRef.current = false;
+    };
+  }, []);
 
   // Load and process wall image
   useEffect(() => {
     const img = new Image();
-    img.src = Wall1;
+    img.src = WALLS[currentWall].image;
     img.onload = () => {
-      wallRef.current = img;
-      processWallImage(img);
-      startPhaseTimer();
+      setIsImageLoaded(true);
+      setTimeout(() => { // Defer image processing
+        processWallImage(img);
+        startFadeAnimation();
+      }, 0);
     };
-  }, []);
+    img.onerror = () => {
+      console.error('Failed to load wall image:', WALLS[currentWall].image);
+      setIsImageLoaded(false);
+      // Fallback to empty image
+      setTimeout(() => { // Defer image processing
+        processWallImage(new Image());
+        startFadeAnimation();
+      }, 0);
+    };
+  }, [currentWall]);
 
   const processWallImage = (img) => {
     const canvas = document.createElement('canvas');
@@ -39,79 +64,93 @@ const GamePhaseManager = ({ poseLandmarks, onSuccess, onFail }) => {
         }
       }
     }
-    setWhitePixels(pixels);
+    
+    wallDataRef.current = {
+      whitePixels: pixels,
+      width: img.width,
+      height: img.height
+    };
   };
 
-  const startPhaseTimer = () => {
-    const startTime = Date.now();
-    const targetDuration = phase === 'preview' 
-      ? GAME_CONFIG.PREVIEW_DURATION
-      : GAME_CONFIG.MATCHING_DURATION;
+  const startFadeAnimation = () => {
+    startTimeRef.current = Date.now();
+    cancelAnimationFrame(animationRef.current);
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTimeRef.current;
+      const progress = Math.min(elapsed / GAME_CONFIG.WALL_DURATION, 1);
+      setWallOpacity(progress);
+      setTimeRemaining(Math.ceil((GAME_CONFIG.WALL_DURATION - elapsed)/1000));
 
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      setTimeLeft(targetDuration - elapsed);
-
-      if (elapsed >= targetDuration) {
-        clearInterval(timer);
-        if (phase === 'preview') {
-          setPhase('matching');
-          setTimeLeft(GAME_CONFIG.MATCHING_DURATION);
-          startPhaseTimer();
-        } else {
-          evaluatePose();
-        }
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        checkPoseCollision();
       }
-    }, 100);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
   };
 
-  const evaluatePose = () => {
-    if (!poseSnapshot.current || !wallRef.current) {
+  const checkPoseCollision = () => {
+    if (!gameActiveRef.current) {
+      return;
+    }
+
+    if (!poseLandmarks) {
       onFail();
       return;
     }
 
-    const canvasWidth = wallRef.current.width;
-    const canvasHeight = wallRef.current.height;
-    let matchedPoints = 0;
+    const allSafe = Object.values(poseLandmarks).every(landmark => {
+      if (!landmark || landmark.visibility < 0.5) return true;
 
-    poseSnapshot.current.forEach(landmark => {
-      const x = Math.floor(landmark.x * canvasWidth);
-      const y = Math.floor(landmark.y * canvasHeight);
-      if (whitePixels.has(`${x},${y}`)) matchedPoints++;
+      const x = Math.floor(landmark.x * wallDataRef.current.width);
+      const y = Math.floor(landmark.y * wallDataRef.current.height);
+
+      // Check with 5px tolerance
+      for (let dx = -5; dx <= 5; dx++) {
+        for (let dy = -5; dy <= 5; dy++) {
+          if (wallDataRef.current.whitePixels.has(`${x + dx},${y + dy}`)) {
+            return true;
+          }
+        }
+      }
+      return false;
     });
 
-    const matchPercent = matchedPoints / poseSnapshot.current.length;
-    matchPercent >= GAME_CONFIG.MATCH_THRESHOLD ? onSuccess() : onFail();
+    allSafe ? handleSuccess() : onFail();
   };
 
-  // Capture pose snapshot when matching phase ends
-  useEffect(() => {
-    if (phase === 'matching') {
-      poseSnapshot.current = poseLandmarks;
-    }
-  }, [phase, poseLandmarks]);
+  const handleSuccess = () => {
+    onSuccess();
+    setCurrentWall(prev => (prev + 1) % WALLS.length);
+    startTimeRef.current = Date.now() - (GAME_CONFIG.WALL_DURATION * 0.2); // Reduce time by 20%
+    startFadeAnimation();
+  };
 
   return (
-    <div className="absolute inset-0 z-30">
-      {/* Preview Phase - Wall Display */}
-      {phase === 'preview' && wallRef.current && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img 
-            src={Wall1} 
-            className="max-w-full max-h-full object-contain border-4 border-white/30 rounded-xl"
-            alt="Wall pattern"
-            style={{
-              boxShadow: '0 0 40px rgba(255,255,255,0.2)',
-              transform: 'scaleX(-1)' // Match video mirroring
-            }}
-          />
-        </div>
+    <div className="absolute inset-0 z-30 flex items-center justify-center">
+      {isImageLoaded && (
+        <img 
+          src={WALLS[currentWall].image}
+          className="absolute max-w-full max-h-full object-contain wall-transition"
+          style={{
+            opacity: wallOpacity,
+            transform: 'scaleX(-1)'
+          }}
+          alt="Safety wall pattern"
+        />
       )}
       
-      {/* Phase Timer */}
+      {!isImageLoaded && (
+        <div className="text-white text-lg">
+          Loading wall pattern...
+        </div>
+      )}
+
       <div className="absolute top-4 left-4 text-white text-4xl font-bold z-40">
-        {Math.ceil(timeLeft / 1000)}
+        {timeRemaining}s
       </div>
     </div>
   );
