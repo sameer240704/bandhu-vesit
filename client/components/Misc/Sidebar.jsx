@@ -31,7 +31,7 @@ const Sidebar = () => {
           <div className="flex justify-between items-center mb-2">
             <Image
               src={Logo}
-              alt="MindPlay Logo"
+              alt="Bandhu Logo"
               className="h-7 w-auto mb-5 tour-logo"
             />
           </div>

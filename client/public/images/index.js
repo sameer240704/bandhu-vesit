@@ -13,6 +13,7 @@ import Wall1 from "./wall1.png";
 import Coins from "./coins.png";
 import background from "./whiteboard_bg.avif";
 import BandhuUniverse from "./bandhu-universe.jpeg";
+import WordChain from "./word-chain.jpeg";
 
 export {
   FlappyBird,
@@ -29,5 +30,6 @@ export {
   background,
   Coins,
   Wall1,
-  BandhuUniverse
+  BandhuUniverse,
+  WordChain
 };

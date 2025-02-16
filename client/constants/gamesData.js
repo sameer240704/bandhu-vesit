@@ -7,12 +7,13 @@ import {
   BalloonPop,
   HoleInTheWall,
   WhiteBoard,
+  WordChain,
 } from "@/public/images";
 
 export const motorGames = [
   {
     title: "Music Mania",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.8",
     players: "1828",
     views: "210",
@@ -22,7 +23,7 @@ export const motorGames = [
   },
   {
     title: "Balloon Pop",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.9",
     players: "1356",
     views: "6578",
@@ -32,7 +33,7 @@ export const motorGames = [
   },
   {
     title: "Hole in the Wall",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.5",
     players: "2976",
     views: "4568",
@@ -42,7 +43,7 @@ export const motorGames = [
   },
   {
     title: "Flappy Bird",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.1",
     players: "644",
     views: "1232",
@@ -55,7 +56,7 @@ export const motorGames = [
 export const emotionalGames = [
   {
     title: "Color And Paint",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.8",
     players: "1828",
     views: "250",
@@ -65,7 +66,7 @@ export const emotionalGames = [
   },
   {
     title: "Whiteboard",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.7",
     players: "982",
     views: "424",
@@ -78,7 +79,7 @@ export const emotionalGames = [
 export const cognitiveGames = [
   {
     title: "Number Match - Memory Game",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.8",
     players: "1828",
     views: "352",
@@ -89,7 +90,7 @@ export const cognitiveGames = [
   },
   {
     title: "Nodulus",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.8",
     players: "1928",
     views: "2738",
@@ -98,12 +99,23 @@ export const cognitiveGames = [
     gameLink: "/nodulus",
     favorite: false,
   },
+  {
+    title: "Word Chain",
+    publisher: "Bandhu",
+    rating: "4.6",
+    players: "273",
+    views: "2892",
+    imageUrl: WordChain,
+    isHot: false,
+    gameLink: "/word-chain",
+    favorite: false,
+  },
 ];
 
 export const socialGames = [
   {
     title: "Scenario Saga",
-    publisher: "MindPlay",
+    publisher: "Bandhu",
     rating: "4.7",
     players: "982",
     views: "424",
