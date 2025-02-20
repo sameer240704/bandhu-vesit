@@ -134,7 +134,7 @@ const GamePhaseManager = ({ poseLandmarks, onSuccess, onFail }) => {
       {isImageLoaded && (
         <img 
           src={WALLS[currentWall].image}
-          className="absolute max-w-full max-h-full object-contain wall-transition"
+          className="absolute w-full h-full object-cover wall-transition"
           style={{
             opacity: wallOpacity,
             transform: 'scaleX(-1)'

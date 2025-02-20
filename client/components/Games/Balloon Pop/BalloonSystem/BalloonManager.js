@@ -7,56 +7,72 @@ export class BalloonManager {
     this.canvasHeight = canvasHeight;
     this.balloons = [];
     this.lastSpawnTime = 0;
-    this.spawnInterval = 5000; // Spawn every second
-    this.lastUpdateTime = null;
+    this.spawnInterval = 1000; // Spawn every 1 second
+    this.maxBalloons = 10;
+    this.lastUpdateTime = performance.now(); // Initialize with current time
   }
 
   update(currentTime) {
-    if (!this.lastUpdateTime) {
-      this.lastUpdateTime = currentTime;
-    }
     const dt = (currentTime - this.lastUpdateTime) / 1000;
     this.lastUpdateTime = currentTime;
-    
-    // Spawn new balloons every second
+
+    // Spawn new balloons with controlled frequency
     if (currentTime - this.lastSpawnTime > this.spawnInterval) {
-      // Spawn 3 balloons
-      for (let i = 0; i < 1; i++) {
-        this.spawnBalloon();
-      }
+      this.spawnBalloon();
       this.lastSpawnTime = currentTime;
     }
-    
-    // Update balloons
+
+    // Update and filter balloons
     this.balloons = this.balloons.filter(balloon => {
-      balloon.update(dt);
-      return !balloon.isPopped && balloon.progress < 1;
+      const shouldKeep = balloon.update(dt);
+      return !balloon.isPopped && shouldKeep;
     });
   }
 
   spawnBalloon() {
-    // Pick random path and color
-    const path = BALLOON_PATHS[Math.floor(Math.random() * BALLOON_PATHS.length)];
-    const color = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
-    
-    const balloon = new Balloon(path, color);
-    this.balloons.push(balloon);
+    if (this.balloons.length < this.maxBalloons) {
+      const path = BALLOON_PATHS[Math.floor(Math.random() * BALLOON_PATHS.length)];
+      const balloon = new Balloon(
+        path,
+        BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)],
+        30
+      );
+      // Adjust start position to bottom of canvas
+      balloon.y = this.canvasHeight - balloon.radius;
+      this.balloons.push(balloon);
+    }
   }
 
   checkCollisions(fingerTips) {
-    let score = 0;
+    let totalScore = 0;
+    const poppedIds = new Set();
+    
     fingerTips.forEach(tip => {
-      this.balloons.forEach(balloon => {
-        if (!balloon.isPopped && balloon.checkCollision(tip.x, tip.y)) {
+      this.balloons.forEach((balloon, index) => {
+        if (!poppedIds.has(index) && !balloon.isPopped && balloon.checkCollision(tip.x, tip.y)) {
           balloon.isPopped = true;
-          score += balloon.points;
+          totalScore += balloon.points;
+          poppedIds.add(index);
+          console.log(`Popped balloon worth ${balloon.points} points`); // Debug
         }
       });
     });
-    return score;
+    
+    return totalScore;
   }
 
   draw(ctx) {
-    this.balloons.forEach(balloon => balloon.draw(ctx));
+    this.balloons.forEach(balloon => {
+      balloon.draw(ctx);
+      // Reset pop effect after drawing
+      if (balloon.popEffect) {
+        ctx.beginPath();
+        ctx.arc(balloon.x, balloon.y, balloon.radius * 1.5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        balloon.popEffect = false;
+      }
+    });
   }
 }

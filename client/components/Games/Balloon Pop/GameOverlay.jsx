@@ -39,7 +39,11 @@ const GameOverlay = ({ gameState, handLandmarks, onScoreUpdate }) => {
           
           const score = balloonManager.checkCollisions(fingerTips);
           if (score > 0) {
-            onScoreUpdate(prev => prev + score);
+            onScoreUpdate(prev => {
+              const newScore = prev + score;
+              console.log('Score update:', newScore); // Verify in console
+              return newScore;
+            });
           }
         }
         

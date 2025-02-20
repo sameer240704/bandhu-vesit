@@ -18,19 +18,31 @@ const GameCanvas = ({
   // Set canvas dimensions on mount and window resize
   useEffect(() => {
     const handleResize = () => {
-      if (canvasRef.current) {
-        const viewportHeight = window.innerHeight * 0.8;
-        const aspectRatio = 16 / 9;
-        const width = viewportHeight * aspectRatio;
-
-        canvasRef.current.width = width;
-        canvasRef.current.height = viewportHeight;
+      if (canvasRef.current && videoRef.current) {
+        // Get actual video display dimensions
+        const video = videoRef.current;
+        const rect = video.getBoundingClientRect();
+        
+        // Set canvas to match video's rendered size
+        canvasRef.current.width = rect.width;
+        canvasRef.current.height = rect.height;
+        
+        console.log('Canvas dimensions:', rect.width, rect.height); // Debug log
       }
     };
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Initial setup
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener('loadedmetadata', handleResize);
+      new ResizeObserver(handleResize).observe(video);
+    }
+
+    return () => {
+      if (video) {
+        video.removeEventListener('loadedmetadata', handleResize);
+      }
+    };
   }, []);
 
   useEffect(() => {

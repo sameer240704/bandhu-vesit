@@ -22,18 +22,18 @@ const GAME_CONFIG = {
     [255, 255, 186, 0.7], // Pastel Yellow
     [221, 160, 221, 0.7], // Pastel Purple
   ],
-  BASE_SPAWN_INTERVAL: 1,
+  BASE_SPAWN_INTERVAL: 0.75,
   MIN_SPAWN_INTERVAL: 0.3,
-  MISSED_PENALTY: 35,
+  MISSED_PENALTY: 0,
 };
 
 class Balloon {
   constructor(canvasWidth, canvasHeight) {
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
-    this.radius = Math.floor(Math.random() * 30 + 15);
-    this.speed = Math.floor(Math.random() * 5 + 5);
-    this.x = Math.random() * (canvasWidth - this.radius * 2) + this.radius;
+    this.radius = Math.floor(Math.random() * 30 + 20);
+    this.speed = Math.floor(Math.random() * 5 + 10);
+    this.x = Math.random() * (canvasWidth - this.radius) + this.radius;
     this.y = canvasHeight + this.radius;
     this.color =
       GAME_CONFIG.COLORS[Math.floor(Math.random() * GAME_CONFIG.COLORS.length)];
@@ -44,7 +44,7 @@ class Balloon {
   update(dt) {
     if (!this.isPopped) {
       this.y -= this.speed * dt;
-      this.x += this.drift * dt * 60;
+      this.x += this.drift * dt * 35;
 
       // Bounce off walls with angle control
       if (this.x < this.radius) {

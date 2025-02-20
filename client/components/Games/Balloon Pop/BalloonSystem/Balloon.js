@@ -7,27 +7,35 @@ export class Balloon {
     this.progress = 0; // 0 to 1
     this.x = path.startX;
     this.y = 720; // Canvas height
-    this.points = Math.ceil(path.speed / 5); // Faster balloons worth more
+    this.points = Math.ceil((path.speed * 10) + (50 - radius)); // Better points calculation
+    this.baseSpeed = path.speed; // Store original speed
+    this.speed = this.baseSpeed; // Current speed remains independent
+    this.popEffect = false;
+    this.drift = 0;
+    this.canvasWidth = 720; // Assuming a default canvas width
   }
 
   update(dt) {
     if (!this.isPopped) {
-      // Update progress
-      this.progress += (this.path.speed * dt) / 720; // Normalize to screen height
-      this.progress = Math.min(this.progress, 1);
-
-      // Update position
-      if (this.path.curve) {
-        // S-curve movement
-        this.x = this.path.startX + (this.path.endX - this.path.startX) * this.progress;
-        const wave = Math.sin(this.progress * Math.PI * 2) * 100;
-        this.x += wave;
-      } else {
-        // Linear movement
-        this.x = this.path.startX + (this.path.endX - this.path.startX) * this.progress;
+      // Maintain constant vertical speed
+      this.y -= this.speed * dt;
+      
+      // Horizontal movement with bounce physics
+      this.x += this.drift * dt * 60;
+      
+      // Bounce off walls with energy preservation
+      if (this.x < this.radius) {
+        this.drift = Math.abs(this.drift) * 0.9;
+        this.x = this.radius;
+      } else if (this.x > this.canvasWidth - this.radius) {
+        this.drift = -Math.abs(this.drift) * 0.9;
+        this.x = this.canvasWidth - this.radius;
       }
-      this.y = 720 - (this.progress * 720);
+      
+      // Only remove when fully off screen at top
+      return this.y > -this.radius * 2;
     }
+    return false;
   }
 
   draw(ctx) {

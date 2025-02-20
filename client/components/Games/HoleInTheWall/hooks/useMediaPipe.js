@@ -75,7 +75,11 @@ export const useMediaPipe = (videoRef) => {
       const camera = new window.Camera(videoRef.current, {
         onFrame: async () => {
           if (videoRef.current) {
-            await poseInstance.send({image: videoRef.current});
+            try {
+              await poseInstance.send({image: videoRef.current});
+            } catch (error) {
+              console.error('Error sending image to MediaPipe:', error);
+            }
           }
         },
         width: 1280,

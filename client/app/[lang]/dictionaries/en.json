@@ -26,7 +26,8 @@
     "avatar-builder": "Avatar Builder",
     "scenario-saga": "Scenario Saga",
     "bandhu-universe": "Bandhu Universe",
-    "favourite": "Favourite"
+    "favourite": "Favourite",
+    "amigo": "Amigo"
   },
   "voice": {
     "start_listening": "Start listening",
@@ -57,7 +58,8 @@
     "chatbot": "Bandhu Chatbot",
     "news": "News & Insights",
     "cb": "Bot",
-    "ps": "Person"
+    "ps": "Person",
+    "Amigo": "Amigo"
   },
   "chatbot": {
     "title": "amigo.ai",
