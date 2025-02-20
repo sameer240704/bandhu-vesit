@@ -27,6 +27,7 @@ import VoiceControl from "./VoiceControl";
 import { useUser } from "@clerk/nextjs";
 import { getUserDetails } from "@/lib/actions/user.action";
 import { Coins } from "@/public/images";
+import { useNextStep } from "nextstepjs";
 
 const Header = () => {
   const pathname = usePathname();
@@ -35,6 +36,14 @@ const Header = () => {
   const [breadcrumbItems, setBreadcrumbItems] = useState([]);
   const [coins, setCoins] = useState(100);
   const { user } = useUser();
+  const {
+    startNextStep,
+    closeNextStep,
+    currentTour,
+    currentStep,
+    setCurrentStep,
+    isNextStepVisible,
+  } = useNextStep();
 
   const chatbotPath = pathname.split("/").filter(Boolean).pop();
   const isInGameRoute = /^\/[a-z]{2}\/games\/[a-z-]+\/[a-z-]+$/i.test(pathname);
@@ -62,6 +71,10 @@ const Header = () => {
 
     setBreadcrumbItems(breadcrumbList);
   }, [pathname, dict, currentLang, user]);
+
+  const handleStartTour = () => {
+    startNextStep("mainTour");
+  };
 
   return (
     <div className="relative">
@@ -98,6 +111,7 @@ const Header = () => {
               {dict?.breadcrumb?.go_back}
             </Button>
           )}
+          <Button onClick={handleStartTour}>Start</Button>
           {chatbotPath === "chatbot" && <ChatbotSwitcher />}
           <LanguageSwitcher currentLang={currentLang} />
           <TooltipProvider>

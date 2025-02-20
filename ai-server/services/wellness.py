@@ -39,7 +39,7 @@ CRISIS_RESOURCES = {
 }
 
 def get_mindplay_recommendation():
-    """Recommends a MindPlay game."""
+    """Recommends a Bandhu game."""
     games_list = "\n\n".join([
         f"• {game:<15} 🎮    {description}"
         for game, description in MINDPLAY_GAMES.items()
@@ -85,9 +85,10 @@ def check_for_boredom(user_input):
 
 def prepare_system_context(user_message):
     """Prepares the system context for the language model."""
-    return """You are Amigo.AI, a mental wellness companion. Keep responses concise (2-3 lines max).
-    Focus on: practical advice, professional referrals, and brief wellness techniques.
-    Be direct, supportive, and clear. Avoid lengthy explanations."""
+    return """You are Amigo.AI, a mental wellness companion. The platform is called Bandhu.
+    Keep responses concise (2-3 lines max). Focus on: practical advice, professional 
+    referrals, and brief wellness techniques. Be direct, supportive, and clear. Avoid lengthy 
+    explanations."""
 
 async def text_to_speech(text):
     """Converts text to speech using Edge TTS."""

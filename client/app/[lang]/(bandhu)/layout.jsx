@@ -1,18 +1,24 @@
 import Header from "@/components/Misc/Header";
 import Sidebar from "@/components/Misc/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
+import { NextStepProvider, NextStep } from "nextstepjs";
+import { steps } from "@/lib/step";
 
 export default function MindPlayLayout({ children }) {
   return (
-    <div className="h-screen flex">
-      <Sidebar />
+    <NextStepProvider>
+      <NextStep steps={steps}>
+        <div className="h-screen flex">
+          <Sidebar />
 
-      <main className="h-screen w-full p-5 flex flex-col justify-start">
-        <Header />
-        {children}
-      </main>
+          <main className="h-screen w-full p-5 flex flex-col justify-start">
+            <Header />
+            {children}
+          </main>
 
-      <Toaster />
-    </div>
+          <Toaster />
+        </div>
+      </NextStep>
+    </NextStepProvider>
   );
 }

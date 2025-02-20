@@ -28,10 +28,10 @@ const Sidebar = () => {
         } shadow-xl`}
       >
         <div className="flex flex-col justify-start items-start">
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-2" id="step1">
             <Image
               src={Logo}
-              alt="MindPlay Logo"
+              alt="Bandhu Logo"
               className="h-7 w-auto mb-5 tour-logo"
             />
           </div>
@@ -46,7 +46,11 @@ const Sidebar = () => {
                 )}
                 <ul>
                   {category.items.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-center mb-5">
+                    <li
+                      key={itemIndex}
+                      className="flex items-center mb-5"
+                      id={`${item.title === "chatbot" ? "amigo" : ""}`}
+                    >
                       <Link
                         href={`/${currentLang}${item.route}`}
                         className={`flex items-center gap-3 text-gray-200 hover:font-medium transition ${

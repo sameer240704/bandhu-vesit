@@ -1,19 +1,19 @@
 // app/page.js
-'use client'
+"use client";
 
-import React from 'react';
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import React from "react";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function ScenarioSaga() {
   const [story, setStory] = useState([]);
   const [iteration, setIteration] = useState(0);
-  const [characterName, setCharacterName] = useState('');
-  const [characterAge, setCharacterAge] = useState('');
+  const [characterName, setCharacterName] = useState("");
+  const [characterAge, setCharacterAge] = useState("");
   const [setupComplete, setSetupComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -22,8 +22,8 @@ export default function ScenarioSaga() {
     setIsLoading(true);
     try {
       // Simulated API call - replace with your actual API
-      const response = await fetch('/api/generate-scenario', {
-        method: 'POST',
+      const response = await fetch("/api/generate-scenario", {
+        method: "POST",
         body: JSON.stringify({ age, name }),
       });
       const data = await response.json();
@@ -71,8 +71,8 @@ export default function ScenarioSaga() {
   const handleNewStory = () => {
     setStory([]);
     setIteration(0);
-    setCharacterName('');
-    setCharacterAge('');
+    setCharacterName("");
+    setCharacterAge("");
     setSetupComplete(false);
   };
 
@@ -84,7 +84,9 @@ export default function ScenarioSaga() {
             <CardTitle className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
               Scenario Saga
             </CardTitle>
-            <p className="text-gray-600 mt-2">Create your own personalized story adventure!</p>
+            <p className="text-gray-600 mt-2">
+              Create your own personalized story adventure!
+            </p>
           </CardHeader>
           <CardContent className="p-6">
             {!setupComplete ? (
@@ -125,7 +127,7 @@ export default function ScenarioSaga() {
                       Starting Story...
                     </>
                   ) : (
-                    'Start Story'
+                    "Start Story"
                   )}
                 </Button>
               </form>
@@ -133,7 +135,10 @@ export default function ScenarioSaga() {
               <div className="space-y-6">
                 <div className="space-y-4">
                   {story.map((part, index) => (
-                    <Card key={index} className="border border-purple-100 bg-white/50">
+                    <Card
+                      key={index}
+                      className="border border-purple-100 bg-white/50"
+                    >
                       <CardHeader>
                         <CardTitle className="text-lg text-purple-800">
                           Chapter {index + 1}
@@ -148,21 +153,22 @@ export default function ScenarioSaga() {
 
                 {iteration < 5 ? (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Replace with actual options from your API */}
-                    {['Option 1', 'Option 2', 'Option 3'].map((option, index) => (
-                      <Card
-                        key={index}
-                        className="border border-purple-100 hover:border-purple-300 transition-all duration-200 cursor-pointer bg-white/50 hover:bg-white/80"
-                        onClick={() => handleChooseOption(option)}
-                      >
-                        <CardContent className="p-4">
-                          <p className="font-medium text-purple-800 mb-2">
-                            Option {index + 1}
-                          </p>
-                          <p className="text-gray-600 text-sm">{option}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
+                    {["Option 1", "Option 2", "Option 3"].map(
+                      (option, index) => (
+                        <Card
+                          key={index}
+                          className="border border-purple-100 hover:border-purple-300 transition-all duration-200 cursor-pointer bg-white/50 hover:bg-white/80"
+                          onClick={() => handleChooseOption(option)}
+                        >
+                          <CardContent className="p-4">
+                            <p className="font-medium text-purple-800 mb-2">
+                              Option {index + 1}
+                            </p>
+                            <p className="text-gray-600 text-sm">{option}</p>
+                          </CardContent>
+                        </Card>
+                      )
+                    )}
                   </div>
                 ) : (
                   <div className="text-center space-y-4">

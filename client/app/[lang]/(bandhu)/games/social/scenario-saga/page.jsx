@@ -243,7 +243,7 @@ const ScenarioSagaPage = () => {
         )}
       </div>
 
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-scroll py-32">
         {gameId ? (
           <div className="max-w-4xl mx-auto space-y-8">
             {story.map((chapter, index) => (

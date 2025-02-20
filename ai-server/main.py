@@ -44,7 +44,7 @@ async def ai_financial_path(
 ):
     """Generates an AI-based financial planning response."""
     try:
-        response = await get_gemini_response(input, risk)  # Await the response
+        response = get_gemini_response(input, risk)  
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Something went wrong: {str(e)}")
